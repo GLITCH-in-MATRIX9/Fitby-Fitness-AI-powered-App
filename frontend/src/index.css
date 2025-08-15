@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+
+
+@keyframes slideCards {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-slideCards {
+  animation: slideCards 20s linear infinite;
+}
+
+.bodymap:hover path {
+  fill: #c41037 !important;
+}
+
