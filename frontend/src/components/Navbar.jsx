@@ -36,7 +36,7 @@ const Navbar = () => {
   };
 
   const profileImageUrl = user?.image
-    ? `http://localhost:5000/uploads/${user.image}`
+    ? `https://fitby-fitness-ai-powered-app.onrender.com/uploads/${user.image}`
     : "https://cdn-icons-png.flaticon.com/512/847/847969.png";
 
   return (

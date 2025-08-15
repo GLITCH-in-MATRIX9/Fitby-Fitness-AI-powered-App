@@ -17,7 +17,7 @@ const BlogList = () => {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/blogs");
+        const res = await fetch("https://fitby-fitness-ai-powered-app.onrender.com/api/blogs");
         const data = await res.json();
         setBlogs(data);
       } catch (err) {
@@ -102,7 +102,7 @@ const BlogList = () => {
                 src={
                   selectedBlog.headerImage.startsWith("http")
                     ? selectedBlog.headerImage
-                    : `http://localhost:5000/uploads/${selectedBlog.headerImage}`
+                    : `https://fitby-fitness-ai-powered-app.onrender.com/uploads/${selectedBlog.headerImage}`
                 }
                 alt={selectedBlog.title}
                 className="w-full h-60 object-cover rounded mb-2"
@@ -140,11 +140,10 @@ const BlogList = () => {
             <button
               key={tag}
               onClick={() => setSelectedTag(tag)}
-              className={`px-4 py-1 rounded-full border ${
-                selectedTag === tag
+              className={`px-4 py-1 rounded-full border ${selectedTag === tag
                   ? "bg-[#ed6126] text-white border-[#ed6126]"
                   : "bg-white text-gray-700 border-gray-300"
-              } hover:bg-[#ed6126] hover:text-white transition`}
+                } hover:bg-[#ed6126] hover:text-white transition`}
             >
               {tag}
             </button>
@@ -164,7 +163,7 @@ const BlogList = () => {
               src={
                 featured.headerImage.startsWith("http")
                   ? featured.headerImage
-                  : `http://localhost:5000/uploads/${featured.headerImage}`
+                  : `https://fitby-fitness-ai-powered-app.onrender.com/uploads/${featured.headerImage}`
               }
               alt={featured.title}
               className="w-full h-80 object-cover"
@@ -257,7 +256,7 @@ const BlogList = () => {
               src={
                 blog.headerImage.startsWith("http")
                   ? blog.headerImage
-                  : `http://localhost:5000/uploads/${blog.headerImage}`
+                  : `https://fitby-fitness-ai-powered-app.onrender.com/uploads/${blog.headerImage}`
               }
               alt={blog.title}
               className="h-40 w-full object-cover"

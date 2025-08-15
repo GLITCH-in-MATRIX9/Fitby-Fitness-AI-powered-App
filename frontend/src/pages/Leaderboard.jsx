@@ -19,7 +19,7 @@ const Leaderboard = () => {
 
     const fetchLeaderboard = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/user/leaderboard", {
+        const res = await fetch("https://fitby-fitness-ai-powered-app.onrender.com/api/user/leaderboard", {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Failed to fetch leaderboard");
@@ -35,7 +35,7 @@ const Leaderboard = () => {
               ...user,
               rank: index + 1,
               image: user.image
-                ? `http://localhost:5000/uploads/${user.image}`
+                ? `https://fitby-fitness-ai-powered-app.onrender.com/uploads/${user.image}`
                 : "https://cdn-icons-png.flaticon.com/512/847/847969.png",
             }));
         }
@@ -47,7 +47,7 @@ const Leaderboard = () => {
             name: currentUser.name || "You",
             rank: "—",
             image: currentUser.image
-              ? `http://localhost:5000/uploads/${currentUser.image}`
+              ? `https://fitby-fitness-ai-powered-app.onrender.com/uploads/${currentUser.image}`
               : "https://cdn-icons-png.flaticon.com/512/847/847969.png",
           });
         }
@@ -88,9 +88,8 @@ const Leaderboard = () => {
                 />
                 <div>
                   <div
-                    className={`font-semibold ${
-                      isCurrentUser ? "text-yellow-800" : "text-gray-900"
-                    }`}
+                    className={`font-semibold ${isCurrentUser ? "text-yellow-800" : "text-gray-900"
+                      }`}
                   >
                     {userEntry.name}
                   </div>
@@ -100,9 +99,8 @@ const Leaderboard = () => {
                 </div>
               </div>
               <div
-                className={`text-lg font-bold ${
-                  isCurrentUser ? "text-yellow-800" : "text-[#ed6126]"
-                }`}
+                className={`text-lg font-bold ${isCurrentUser ? "text-yellow-800" : "text-[#ed6126]"
+                  }`}
               >
                 {userEntry.points} pts
               </div>

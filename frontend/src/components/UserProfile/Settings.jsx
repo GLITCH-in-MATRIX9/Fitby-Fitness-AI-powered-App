@@ -33,7 +33,7 @@ const Settings = () => {
     if (confirmDelete) {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:5000/api/users/delete", {
+        const res = await fetch("https://fitby-fitness-ai-powered-app.onrender.com/api/users/delete", {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
         });

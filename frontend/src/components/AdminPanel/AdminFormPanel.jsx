@@ -19,7 +19,7 @@ const AdminFormPanel = () => {
   });
 
   const [status, setStatus] = useState("");
-  const [statusType, setStatusType] = useState(""); // "success", "error", "submitting"
+  const [statusType, setStatusType] = useState("");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -31,7 +31,7 @@ const AdminFormPanel = () => {
     setStatus("Submitting...");
 
     try {
-      const res = await fetch("http://localhost:5000/api/videos", {
+      const res = await fetch("https://fitby-fitness-ai-powered-app.onrender.com/api/videos", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

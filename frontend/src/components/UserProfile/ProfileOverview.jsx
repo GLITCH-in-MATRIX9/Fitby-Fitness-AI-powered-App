@@ -36,7 +36,7 @@ const ProfileOverview = () => {
 
     const fetchProfile = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/user/profile", {
+        const res = await fetch("https://fitby-fitness-ai-powered-app.onrender.com/api/user/profile", {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Failed to fetch profile");
@@ -50,7 +50,7 @@ const ProfileOverview = () => {
 
     const fetchWorkouts = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/workouts", {
+        const res = await fetch("https://fitby-fitness-ai-powered-app.onrender.com/api/workouts", {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Failed to fetch workouts");
@@ -63,7 +63,7 @@ const ProfileOverview = () => {
 
     const fetchPoints = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/workouts/points", {
+        const res = await fetch("https://fitby-fitness-ai-powered-app.onrender.com/api/workouts/points", {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Failed to fetch points");
@@ -81,7 +81,7 @@ const ProfileOverview = () => {
 
   const fetchLeaderboard = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/user/leaderboard", {
+      const res = await fetch("https://fitby-fitness-ai-powered-app.onrender.com/api/user/leaderboard", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -93,7 +93,7 @@ const ProfileOverview = () => {
             ...user,
             rank: index + 1,
             image: user.image
-              ? `http://localhost:5000/uploads/${user.image}`
+              ? `https://fitby-fitness-ai-powered-app.onrender.com/uploads/${user.image}`
               : "https://cdn-icons-png.flaticon.com/512/847/847969.png",
           }));
       }
@@ -103,7 +103,7 @@ const ProfileOverview = () => {
           name: profile.name || "You",
           rank: "—",
           image: profile.image
-            ? `http://localhost:5000/uploads/${profile.image}`
+            ? `https://fitby-fitness-ai-powered-app.onrender.com/uploads/${profile.image}`
             : "https://cdn-icons-png.flaticon.com/512/847/847969.png",
         });
       }
@@ -116,7 +116,7 @@ const ProfileOverview = () => {
           name: profile.name || "You",
           rank: "—",
           image: profile.image
-            ? `http://localhost:5000/uploads/${profile.image}`
+            ? `https://fitby-fitness-ai-powered-app.onrender.com/uploads/${profile.image}`
             : "https://cdn-icons-png.flaticon.com/512/847/847969.png",
         }]);
       }
@@ -137,7 +137,7 @@ const ProfileOverview = () => {
     if (!token) return;
     setSaving(true);
     try {
-      const res = await fetch("http://localhost:5000/api/user/profile", {
+      const res = await fetch("https://fitby-fitness-ai-powered-app.onrender.com/api/user/profile", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -164,7 +164,7 @@ const ProfileOverview = () => {
     formData.append("image", file);
     setSaving(true);
     try {
-      const res = await fetch("http://localhost:5000/api/user/upload-profile-image", {
+      const res = await fetch("https://fitby-fitness-ai-powered-app.onrender.com/api/user/upload-profile-image", {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
@@ -247,8 +247,8 @@ const ProfileOverview = () => {
             previewUrl
               ? previewUrl
               : profile.image
-              ? `http://localhost:5000/uploads/${profile.image}`
-              : null
+                ? `https://fitby-fitness-ai-powered-app.onrender.com/uploads/${profile.image}`
+                : null
           }
           onImageUpload={(file) => {
             setPendingImage(file);
@@ -322,7 +322,7 @@ const ProfileOverview = () => {
               <div key={idx} className="bg-[#fff4e8] p-3 rounded-md shadow border border-[#ffcfae]">
                 <div className="flex justify-between text-sm">
                   <span className="font-medium">{w.workout}</span>
-                
+
                 </div>
                 <div className="text-xs text-gray-600">
                   {w.duration} min | {w.calories} kcal | {w.points} pts

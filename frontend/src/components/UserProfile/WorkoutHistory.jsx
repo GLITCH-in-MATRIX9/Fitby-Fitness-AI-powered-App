@@ -35,7 +35,7 @@ const WorkoutHistory = () => {
     if (!token) return;
     const fetchHistory = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/workouts", {
+        const res = await fetch("https://fitby-fitness-ai-powered-app.onrender.com/api/workouts", {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Failed to fetch workouts");
@@ -69,11 +69,12 @@ const WorkoutHistory = () => {
 
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/workouts", {
+      const res = await fetch("https://fitby-fitness-ai-powered-app.onrender.com/api/workouts", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}` },
+          Authorization: `Bearer ${token}`
+        },
         body: JSON.stringify({ ...form, calories, points }),
       });
 

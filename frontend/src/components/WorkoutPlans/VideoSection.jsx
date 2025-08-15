@@ -22,7 +22,7 @@ const VideoSection = ({ muscle, gender }) => {
 
       try {
         const res = await fetch(
-          `http://localhost:5000/api/videos?muscle=${muscle}&gender=${gender}`
+          `https://fitby-fitness-ai-powered-app.onrender.com/api/videos?muscle=${muscle}&gender=${gender}`
         );
         if (!res.ok) throw new Error("Failed to fetch videos");
         const data = await res.json();

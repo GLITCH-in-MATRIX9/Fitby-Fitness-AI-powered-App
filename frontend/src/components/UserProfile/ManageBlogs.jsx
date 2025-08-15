@@ -26,7 +26,7 @@ const ManageBlogs = () => {
   // Fetch user's blogs
   useEffect(() => {
     if (!user?.id || !token) return;
-    fetch(`http://localhost:5000/api/blogs/user/${user.id}`, {
+    fetch(`https://fitby-fitness-ai-powered-app.onrender.com/api/blogs/user/${user.id}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -54,8 +54,8 @@ const ManageBlogs = () => {
     if (form.imageFile) formData.append("headerImage", form.imageFile);
 
     const url = editingId
-      ? `http://localhost:5000/api/blogs/${editingId}`
-      : "http://localhost:5000/api/blogs";
+      ? `https://fitby-fitness-ai-powered-app.onrender.com/api/blogs/${editingId}`
+      : "https://fitby-fitness-ai-powered-app.onrender.com/api/blogs";
 
     fetch(url, {
       method: editingId ? "PUT" : "POST",
@@ -102,7 +102,7 @@ const ManageBlogs = () => {
   };
 
   const handleDelete = (id) => {
-    fetch(`http://localhost:5000/api/blogs/${id}`, {
+    fetch(`https://fitby-fitness-ai-powered-app.onrender.com/api/blogs/${id}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
     })
@@ -163,8 +163,8 @@ const ManageBlogs = () => {
             onClick={handleCreate}
             disabled={saving}
             className={`${editingId
-                ? "bg-green-600 hover:bg-green-700"
-                : "bg-blue-600 hover:bg-blue-700"
+              ? "bg-green-600 hover:bg-green-700"
+              : "bg-blue-600 hover:bg-blue-700"
               } text-white px-4 py-2 rounded flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed`}
           >
             {saving ? (
@@ -204,7 +204,7 @@ const ManageBlogs = () => {
             >
               {blog.headerImage && (
                 <img
-                  src={`http://localhost:5000/uploads/${blog.headerImage}`}
+                  src={`https://fitby-fitness-ai-powered-app.onrender.com/uploads/${blog.headerImage}`}
                   alt={blog.title}
                   className="w-full md:w-1/3 h-48 object-cover"
                 />

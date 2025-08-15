@@ -13,7 +13,7 @@ const Profile = () => {
 
     const fetchProfile = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/user/profile", {
+        const res = await fetch("https://fitby-fitness-ai-powered-app.onrender.com/api/user/profile", {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,

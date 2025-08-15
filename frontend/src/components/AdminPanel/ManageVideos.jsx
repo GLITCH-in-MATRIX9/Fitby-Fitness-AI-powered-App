@@ -9,7 +9,7 @@ const ManageVideos = () => {
   // Fetch videos from API
   const fetchVideos = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/videos");
+      const res = await fetch("https://fitby-fitness-ai-powered-app.onrender.com/api/videos");
       const data = await res.json();
       setVideos(data);
     } catch (err) {
@@ -25,7 +25,7 @@ const ManageVideos = () => {
     if (!confirm) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/api/videos/${id}`, {
+      const res = await fetch(`https://fitby-fitness-ai-powered-app.onrender.com/api/videos/${id}`, {
         method: "DELETE",
       });
       const data = await res.json();
