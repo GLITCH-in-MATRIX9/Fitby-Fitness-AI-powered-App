@@ -27,19 +27,6 @@ It features a clean UI, React-based frontend (deployed on Vercel), and a robust 
 
 ---
 
-## Architecture
-
-[Client (React Frontend on Vercel)]
-           ↓ Calls API
-[Backend (Express + MongoDB on Render)]
-           ↓ Fetch/Store data
-[MongoDB Atlas]
-
-- CORS is configured for both local development and your deployed domain.  
-- Environment variables and secrets are securely managed via `.env` and Render settings.
-
----
-
 ## Quick Setup
 
 ### Prerequisites
