@@ -1,5 +1,6 @@
 # FitBy – AI‑Powered Fitness Companion
 <img width="1896" height="916" alt="Screenshot 2025-08-15 223025" src="https://github.com/user-attachments/assets/c2fcbc20-ca51-4c1a-8346-c98bb99c5652" />
+![Uploading Screenshot 2025-08-15 223145.png…]()
 
 
 **FitBy** is a modern fitness web app that uses AI to personalize workout plans, track progress, and help users stay fit smarter. 
