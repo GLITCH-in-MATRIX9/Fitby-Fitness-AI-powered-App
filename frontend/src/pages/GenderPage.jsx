@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import MuscleMap from '../components/WorkoutPlans/MuscleMapViewer';
 
 const GenderPage = () => {
-  const { gender } = useParams();  // This grabs "male" or "female" from the URL
+  const { gender } = useParams(); 
 
   return (
     <div>
