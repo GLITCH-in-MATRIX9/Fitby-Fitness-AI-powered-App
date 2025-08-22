@@ -1,4 +1,6 @@
 # FitBy – AI‑Powered Fitness Companion
+This project is still under construction
+Feedback is welcome
 <img width="1896" height="916" alt="Screenshot 2025-08-15 223025" src="https://github.com/user-attachments/assets/c2fcbc20-ca51-4c1a-8346-c98bb99c5652" />
 
 <img width="1894" height="876" alt="Screenshot 2025-08-15 223145" src="https://github.com/user-attachments/assets/7b316927-01a3-4899-af42-f79f1b7e3260" />
