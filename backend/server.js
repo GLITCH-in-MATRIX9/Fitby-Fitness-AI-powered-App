@@ -13,7 +13,7 @@ const workoutRoutes = require("./routes/workoutRoutes");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// CORS setup — allow your deployed frontend domain too
+
 app.use(cors({
   origin: [
     "http://localhost:5173",
@@ -25,7 +25,6 @@ app.use(cors({
 }));
 
 
-// Body parsers
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
