@@ -9,6 +9,8 @@ const userRoutes = require("./routes/user");
 const blogRoutes = require("./routes/blogRoutes");
 const videoRoutes = require("./routes/videoRoutes");
 const workoutRoutes = require("./routes/workoutRoutes");
+const aiDietPlanRoutes = require("./routes/aiDietPlanRoutes");
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -37,6 +39,7 @@ app.use("/api/user", userRoutes);
 app.use("/api/blogs", blogRoutes);
 app.use("/api/videos", videoRoutes);
 app.use("/api/workouts", workoutRoutes);
+app.use("/api/orkes-diet", aiDietPlanRoutes);
 
 // MongoDB connection
 const connectDB = async () => {
