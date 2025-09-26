@@ -20,8 +20,8 @@ router.post("/create-checkout-session", async (req, res) => {
                 quantity: 1,
             }],
             mode: 'payment',
-            success_url: "https://fitby-fitness-ai-powered-app.onrender.com",
-            cancel_url: "https://fitby-fitness-ai-powered-app.onrender.com",
+            success_url: "https://fitby-fitness-ai-powered-app-in6l.vercel.app/personalized-trainer",
+            cancel_url: "https://fitby-fitness-ai-powered-app-in6l.vercel.app/personalized-trainer",
         });
         res.json({ id: session.id });
     } catch (error) {
