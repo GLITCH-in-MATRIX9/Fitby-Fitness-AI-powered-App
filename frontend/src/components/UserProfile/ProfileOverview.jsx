@@ -236,13 +236,13 @@ const ProfileOverview = () => {
   );
 
   return (
-    <div className="flex gap-6 p-6 bg-white shadow rounded-md max-w-6xl mx-auto">
+    <div className="flex flex-col lg:flex-row gap-6 p-4 sm:p-6 bg-white shadow rounded-md max-w-6xl mx-auto">
       {/* Left: Profile Stats + Leaderboard */}
-      <div className="w-1/3 space-y-6">
+      <div className="w-full lg:w-1/3 space-y-6">
         <ProfileStats
           name={profile.name}
           streak={profile.streak || 0}
-          points={points} // Now coming from /workouts/points
+          points={points}
           profileImage={
             previewUrl
               ? previewUrl
@@ -292,7 +292,7 @@ const ProfileOverview = () => {
               <div className="flex items-center gap-3">
                 <img src={user.image} alt={user.name} className="w-10 h-10 rounded-full object-cover border" />
                 <div>
-                  <div className="text-gray-800 font-medium">{user.name}</div>
+                  <div className="text-gray-800 font-medium truncate">{user.name}</div>
                   <div className="text-xs text-gray-500">{getFitnessRank(user.points)}</div>
                 </div>
               </div>
@@ -312,7 +312,7 @@ const ProfileOverview = () => {
           )}
         </div>
 
-        {/* Workout History */}
+        {/* Recent Workouts */}
         <div className="space-y-3 mt-6">
           <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
             <FaDumbbell className="text-[#ed6126]" /> Recent Workouts
@@ -322,7 +322,6 @@ const ProfileOverview = () => {
               <div key={idx} className="bg-[#fff4e8] p-3 rounded-md shadow border border-[#ffcfae]">
                 <div className="flex justify-between text-sm">
                   <span className="font-medium">{w.workout}</span>
-
                 </div>
                 <div className="text-xs text-gray-600">
                   {w.duration} min | {w.calories} kcal | {w.points} pts
@@ -336,10 +335,13 @@ const ProfileOverview = () => {
       </div>
 
       {/* Right: Profile Form */}
-      <div className="w-2/3 space-y-8">
-        <div className="bg-[#fff6ed] p-6 rounded-md shadow border-[#dea66d]">
-          <h2 className="text-xl font-semibold mb-4 text-gray-800">General Information</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="w-full lg:w-2/3 space-y-8">
+        <div className="bg-[#fff6ed] p-4 sm:p-6 rounded-lg shadow border border-[#dea66d]">
+          <h2 className="text-2xl font-semibold mb-6 text-gray-800 text-center sm:text-left">
+            General Information
+          </h2>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             <Field label="Name" field="name" icon={FaUser} />
             <Field label="Email" field="email" icon={FaEnvelope} type="email" />
             <Field label="Location" field="location" icon={FaMapMarkerAlt} />
@@ -356,27 +358,26 @@ const ProfileOverview = () => {
             <Field label="Supplements" field="supplements" icon={FaCapsules} />
           </div>
 
-          <div className="flex items-center justify-between mt-6 text-sm text-gray-600">
-            <div className="flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-6 gap-3">
+            <div className="flex items-center gap-2 text-gray-600">
               <FaClock className="text-[#ed6126]" />
               <span>
-                Last Updated:{" "}
-                {profile.updatedAt ? new Date(profile.updatedAt).toLocaleString() : "—"}
+                Last Updated: {profile.updatedAt ? new Date(profile.updatedAt).toLocaleString() : "—"}
               </span>
             </div>
             <button
-              className="bg-[#ed6126] text-white px-4 py-2 rounded hover:bg-[#d6521f]"
-              onClick={() => {
-                Object.keys(fieldValues).forEach((field) => handleSave(field));
-              }}
+              className="bg-[#ed6126] text-white px-5 py-2 rounded-lg hover:bg-[#d6521f] w-full sm:w-auto"
+              onClick={() => Object.keys(fieldValues).forEach((field) => handleSave(field))}
               disabled={saving}
             >
               Save All
             </button>
           </div>
         </div>
+
       </div>
     </div>
+
   );
 };
 

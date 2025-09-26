@@ -13,13 +13,13 @@ const workoutRoutes = require("./routes/workoutRoutes");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// CORS setup — allow your deployed frontend domain too
+
 app.use(cors({
   origin: [
     "http://localhost:5173",
     "https://fitby-fitness-ai-powered-app-in6l.vercel.app",
-    "https://fitby-fitness-ai-powered-git-cf2b3f-glitch-in-matrix9s-projects.vercel.app", // optional preview
-    "https://fitby-fitness-ai-powered-app-in6l-pb8o9dxn7.vercel.app" // optional preview
+    "https://fitby-fitness-ai-powered-git-cf2b3f-glitch-in-matrix9s-projects.vercel.app",
+    "https://fitby-fitness-ai-powered-app-in6l-pb8o9dxn7.vercel.app" 
   ],
   credentials: true,
 }));
