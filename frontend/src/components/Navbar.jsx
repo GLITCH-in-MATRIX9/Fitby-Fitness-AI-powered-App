@@ -192,6 +192,13 @@ const Navbar = () => {
             Workout Plans
           </NavLink>
           <NavLink
+            to="/personalized-trainer"
+            onClick={() => setShowMenu(false)}
+            className="block hover:text-[#ed6126]"
+          >
+            Personalized Trainer
+          </NavLink>
+          <NavLink
             to="/ai"
             onClick={() => setShowMenu(false)}
             className="block hover:text-[#ed6126]"
