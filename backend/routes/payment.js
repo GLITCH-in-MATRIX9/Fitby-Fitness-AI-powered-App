@@ -5,7 +5,7 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET);
 
 // payment route
 router.post("/create-checkout-session", async (req, res) => {
-    const { amount, currency } = req.body;
+    const { planName, amount, currency } = req.body;
     try{
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
@@ -13,15 +13,15 @@ router.post("/create-checkout-session", async (req, res) => {
                 price_data: {
                     currency,
                     product_data: {
-                        name: "FitBy Personalized Trainer Subscription",
+                        name: planName,
                     },
                     unit_amount: amount,
                 },
                 quantity: 1,
             }],
             mode: 'payment',
-            success_url: "http://localhost:5173",
-            cancel_url: "http://localhost:5173",
+            success_url: "https://fitby-fitness-ai-powered-app.onrender.com",
+            cancel_url: "https://fitby-fitness-ai-powered-app.onrender.com",
         });
         res.json({ id: session.id });
     } catch (error) {

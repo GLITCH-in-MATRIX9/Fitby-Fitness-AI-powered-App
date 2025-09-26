@@ -90,6 +90,16 @@ const Navbar = () => {
           >
             Workout Plans
           </NavLink>
+          <NavLink
+            to="/personalized-trainer"
+            className={({ isActive }) =>
+              isActive
+                ? "text-[#626262] border-b-2 border-[#ed6126] pb-1"
+                : "hover:text-[#ed6126] transition duration-200"
+            }
+          >
+            Personalized Trainer
+          </NavLink>
         </div>
 
         {/* Right section */}
