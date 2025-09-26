@@ -25,7 +25,7 @@ exports.createVideo = async (req, res) => {
   }
 };
 
-// ✅ Only one definition of getVideos
+
 // @desc   Get all videos (with optional filters)
 // @route  GET /api/videos
 exports.getVideos = async (req, res) => {
