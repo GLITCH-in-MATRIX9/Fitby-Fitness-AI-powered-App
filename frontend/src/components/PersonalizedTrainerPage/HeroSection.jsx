@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 const HeroSection = () => {
     return (
         <section
-            className="relative w-full h-[600px] bg-cover bg-center rounded-xl overflow-hidden text-white"
+            className="relative w-full h-[600px] bg-cover bg-center rounded-xl overflow-hidden text-orange-500"
             style={{ backgroundImage: `url(${heroBg})` }}
         >
             {/* Overlay (optional for contrast) */}
