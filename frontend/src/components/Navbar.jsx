@@ -90,6 +90,16 @@ const Navbar = () => {
           >
             Workout Plans
           </NavLink>
+          <NavLink
+            to="/personalized-trainer"
+            className={({ isActive }) =>
+              isActive
+                ? "text-[#626262] border-b-2 border-[#ed6126] pb-1"
+                : "hover:text-[#ed6126] transition duration-200"
+            }
+          >
+            Personalized Trainer
+          </NavLink>
         </div>
 
         {/* Right section */}
@@ -180,6 +190,13 @@ const Navbar = () => {
             className="block hover:text-[#ed6126]"
           >
             Workout Plans
+          </NavLink>
+          <NavLink
+            to="/personalized-trainer"
+            onClick={() => setShowMenu(false)}
+            className="block hover:text-[#ed6126]"
+          >
+            Personalized Trainer
           </NavLink>
           <NavLink
             to="/ai"
