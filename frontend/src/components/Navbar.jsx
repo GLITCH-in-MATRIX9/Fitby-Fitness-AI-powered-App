@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import logo1 from "../assets/logo.png";
 import logo2 from "../assets/FITBY.png";
 import { FaFire, FaBars, FaTimes } from "react-icons/fa";
+import { AiOutlineFire } from "react-icons/ai"; // Imported for outline style
 import { AuthContext } from "../context/AuthContext.jsx";
 
 const Navbar = () => {
@@ -11,13 +12,6 @@ const Navbar = () => {
   const [showMenu, setShowMenu] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
-
-  // console.log("Navbar: user from AuthContext:", user);
-  // if (user) {
-  //   console.log("Navbar: user.image:", user.image);
-  // } else {
-  //   console.log("Navbar: user is null or undefined.");
-  // }
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -33,6 +27,11 @@ const Navbar = () => {
     logout();
     setDropdownOpen(false);
     navigate("/login");
+  };
+
+  const handleSetStreak = () => {
+    console.log("Streak setter button clicked!");
+    // Logic to set/update the streak can be added here (e.g., call a backend API)
   };
 
   const profileImageUrl = user?.image
@@ -102,8 +101,20 @@ const Navbar = () => {
           </NavLink>
         </div>
 
-        {/* Right section */}
+        {/* Right section (Desktop) */}
         <div className="hidden md:flex items-center space-x-4 relative">
+          
+          {/* STREAK SETTER BUTTON (New Element) */}
+          <button
+            onClick={handleSetStreak}
+            className="text-[#ed6126] border border-[#ed6126] w-8 h-8 rounded-full flex items-center justify-center p-1 hover:bg-[#ed6126] hover:text-white transition duration-200"
+            title="Set Daily Streak"
+          >
+            {/* Using AiOutlineFire for the desired empty border effect */}
+            <AiOutlineFire size={18} />
+          </button>
+
+          {/* User Streak Display (Existing Element) */}
           {typeof user?.streak === "number" && (
             <div className="flex items-center gap-1 text-[#ed6126] text-sm font-semibold">
               <FaFire className="text-xl" />
@@ -111,12 +122,14 @@ const Navbar = () => {
             </div>
           )}
 
+          {/* Fitby AI Button */}
           <NavLink to="/ai">
             <button className="bg-[#ed6126] text-white px-4 py-2 rounded-md font-semibold hover:bg-black transition duration-200">
               Fitby AI
             </button>
           </NavLink>
 
+          {/* User Profile / Login */}
           {user ? (
             <div className="relative" ref={dropdownRef}>
               <button

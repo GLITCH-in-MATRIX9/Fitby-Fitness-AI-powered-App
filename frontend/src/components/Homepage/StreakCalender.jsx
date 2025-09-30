@@ -11,7 +11,7 @@ function formatDate(date) {
   return date.toISOString().slice(0, 10);
 }
 
-const StreakCalendar = ({ streakData }) => {
+const StreakCalendar = ({ streakData = {} }) => { // default to empty object
   const today = new Date();
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
@@ -20,12 +20,19 @@ const StreakCalendar = ({ streakData }) => {
   const firstDay = new Date(currentYear, currentMonth, 1).getDay();
 
   const calculateStreak = () => {
+    if (!streakData || typeof streakData !== "object") return 0;
+
     let streak = 0;
-    let dayPointer = new Date(currentYear, currentMonth, today.getDate());
+    let dayPointer = new Date(today);
+
     while (streakData[formatDate(dayPointer)]) {
       streak++;
       dayPointer.setDate(dayPointer.getDate() - 1);
+
+      // Stop if we move out of available data
+      if (dayPointer < new Date(1970, 0, 1)) break;
     }
+
     return streak;
   };
 
@@ -85,7 +92,7 @@ const StreakCalendar = ({ streakData }) => {
           </span>
           <div
             className="rounded-full px-3 py-1 font-bold text-sm"
-            style={{ backgroundColor: "#F97316", color: "#000" }} // orange bg with black text
+            style={{ backgroundColor: "#F97316", color: "#000" }}
           >
             {today.getDate()} {monthName.toUpperCase()}
           </div>
@@ -107,24 +114,19 @@ const StreakCalendar = ({ streakData }) => {
 
       <div className="grid grid-cols-7 gap-1 text-center">
         {calendarDays.flat().map((day, idx) => {
-          if (!day) {
-            return <div key={idx} className="h-8"></div>;
-          }
+          if (!day) return <div key={idx} className="h-8"></div>;
+
           const dayDate = new Date(currentYear, currentMonth, day);
           const dayKey = formatDate(dayDate);
-          const completed = streakData[dayKey];
-          const isToday = dayDate.toDateString() === new Date().toDateString();
+          const completed = streakData[dayKey] || false; // safe fallback
+          const isToday = dayDate.toDateString() === today.toDateString();
 
           return (
             <Link
               key={idx}
               to={`/streak/${dayKey}`}
               className={`h-8 w-8 rounded flex items-center justify-center
-                ${
-                  completed
-                    ? "bg-orange-500 text-black"
-                    : "bg-gray-800 text-orange-400"
-                }
+                ${completed ? "bg-orange-500 text-black" : "bg-gray-800 text-orange-400"}
                 ${isToday ? "border-2 border-yellow-400" : ""}
                 hover:bg-orange-600 hover:text-black
                 transition-colors

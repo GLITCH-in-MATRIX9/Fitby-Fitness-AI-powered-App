@@ -4,18 +4,19 @@ const Video = require("../models/Video");
 // @route  POST /api/videos
 exports.createVideo = async (req, res) => {
   try {
-    const { title, url, muscle, gender } = req.body;
+    const { title, videoUrl, muscle, gender } = req.body;
 
-    if (!title || !url) {
+    if (!title || !videoUrl) {
       return res.status(400).json({ error: "Title and URL are required" });
     }
 
     const newVideo = new Video({
       title,
-      url,
+      videoUrl,
       muscle: muscle?.toLowerCase(),
       gender: gender?.toLowerCase(),
     });
+
 
     const saved = await newVideo.save();
     res.status(201).json(saved);

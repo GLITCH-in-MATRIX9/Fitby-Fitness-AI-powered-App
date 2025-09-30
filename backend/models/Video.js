@@ -5,7 +5,10 @@ const videoSchema = new mongoose.Schema({
   videoUrl: { type: String, required: true },
   description: String,
   gender: { type: String, enum: ["male", "female", "all"], default: "all" },
-  muscle: { type: String }, // e.g., chest, legs, back
+  muscle: {
+    type: String,
+    required: true
+  },
   createdAt: { type: Date, default: Date.now }
 });
 

@@ -1,20 +1,23 @@
 const express = require("express");
 const router = express.Router();
 const authenticateToken = require("../middleware/auth");
-const stripe = require("stripe")(process.env.STRIPE_SECRET);
 
-// payment route
+const stripeSecretKey = process.env.STRIPE_SECRET;
+if (!stripeSecretKey) {
+    throw new Error("STRIPE_SECRET environment variable is missing.");
+}
+const stripe = require("stripe")(stripeSecretKey);
+
+// payment route    
 router.post("/create-checkout-session", async (req, res) => {
     const { planName, amount, currency } = req.body;
-    try{
+    try {
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             line_items: [{
                 price_data: {
                     currency,
-                    product_data: {
-                        name: planName,
-                    },
+                    product_data: { name: planName },
                     unit_amount: amount,
                 },
                 quantity: 1,

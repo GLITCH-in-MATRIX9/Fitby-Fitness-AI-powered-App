@@ -40,12 +40,12 @@ const AdminForm = () => {
         <h1 className="text-2xl font-bold mb-6">Admin Panel</h1>
         <nav className="space-y-4 text-sm font-medium">
           <button
-            onClick={() => setActivePanel("add")}
+            onClick={() => setActivePanel("manage")}
             className={`flex items-center gap-2 hover:text-[#e9632e] ${
-              activePanel === "add" ? "text-[#e9632e]" : ""
+              activePanel === "manage" ? "text-[#e9632e]" : ""
             }`}
           >
-            <AiOutlinePlus size={20} /> Add Video
+            <AiOutlineEdit size={20} /> Manage Videos
           </button>
           <button
             onClick={() => setActivePanel("stats")}
@@ -55,14 +55,7 @@ const AdminForm = () => {
           >
             <AiOutlineBarChart size={20} /> View Stats
           </button>
-          <button
-            onClick={() => setActivePanel("manage")}
-            className={`flex items-center gap-2 hover:text-[#e9632e] ${
-              activePanel === "manage" ? "text-[#e9632e]" : ""
-            }`}
-          >
-            <AiOutlineEdit size={20} /> Manage Videos
-          </button>
+          
           <button
             onClick={() => setActivePanel("settings")}
             className={`flex items-center gap-2 hover:text-[#e9632e] ${
