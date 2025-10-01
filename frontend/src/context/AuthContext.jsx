@@ -4,31 +4,30 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
-    const storedUser = localStorage.getItem("user");
+    const storedUser = sessionStorage.getItem("user");
     return storedUser ? JSON.parse(storedUser) : null;
   });
 
-  const [token, setToken] = useState(() => localStorage.getItem("token") || null);
+  const [token, setToken] = useState(() => sessionStorage.getItem("token") || null);
 
   const login = ({ token: loginToken, user: loginUser }) => {
-    localStorage.setItem("token", loginToken);
-    localStorage.setItem("user", JSON.stringify(loginUser));
+    sessionStorage.setItem("token", loginToken);
+    sessionStorage.setItem("user", JSON.stringify(loginUser));
     setToken(loginToken);
     setUser(loginUser);
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("user");
     setToken(null);
     setUser(null);
   };
 
- const updateUser = (updatedUser) => {
-  setUser(updatedUser); 
-  localStorage.setItem("user", JSON.stringify(updatedUser));
-};
-
+  const updateUser = (updatedUser) => {
+    setUser(updatedUser); 
+    sessionStorage.setItem("user", JSON.stringify(updatedUser));
+  };
 
   return (
     <AuthContext.Provider value={{ user, token, login, logout, updateUser }}>

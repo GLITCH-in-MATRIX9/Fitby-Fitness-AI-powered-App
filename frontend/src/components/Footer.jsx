@@ -49,7 +49,7 @@ const Footer = () => {
       <div className="mt-10 border-t border-gray-700 pt-4 text-sm text-gray-500 text-center">
         © {new Date().getFullYear()} Fitby. All rights reserved.
         <div className="mt-2">
-          Made with <span className="text-red-500">❤️</span> by Anjali Dass
+          Made with <span className="text-red-500">❤️</span> by Anjali Dass , Diya Arora , Dakshita Agarwal, Aakshi Mehta
         </div>
       </div>
 

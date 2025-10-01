@@ -4,6 +4,7 @@ import Home from './pages/Home';
 
 import Blogs from './pages/Blogs';
 import WorkOut from './assets/WorkOutPlans';
+import PersonalizedTrainer from './pages/PersonalizedTrainer';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import LoginPage from './pages/LoginPage';
@@ -37,6 +38,7 @@ const AppContent = () => {
         <Route path='/' element={<Home />} />
         <Route path='/blogs' element={<Blogs />} />
         <Route path='/workoutplans' element={<WorkOut />} />
+        <Route path='/personalized-trainer' element={<PersonalizedTrainer />} />
         <Route path='/login' element={<LoginPage />} />
         <Route path='/ai' element={<FitbyBot />} />
         <Route path='/workoutplans/:gender' element={<GenderPage />} />

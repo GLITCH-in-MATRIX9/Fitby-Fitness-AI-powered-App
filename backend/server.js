@@ -10,6 +10,7 @@ const blogRoutes = require("./routes/blogRoutes");
 const videoRoutes = require("./routes/videoRoutes");
 const workoutRoutes = require("./routes/workoutRoutes");
 const chatRoutes = require("./routes/chatRoutes"); // GPT4All chat route
+const paymentRoute = require("./routes/payment");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -19,6 +20,9 @@ app.use(cors({
   origin: [
     "http://localhost:5173",
     "https://fitby-fitness-ai-powered-app-in6l.vercel.app"
+    "https://fitby-fitness-ai-powered-app-in6l.vercel.app",
+    "https://fitby-fitness-ai-powered-git-cf2b3f-glitch-in-matrix9s-projects.vercel.app",
+    "https://fitby-fitness-ai-powered-app-in6l-pb8o9dxn7.vercel.app" 
   ],
   credentials: true,
 }));
@@ -37,6 +41,7 @@ app.use("/api/blogs", blogRoutes);
 app.use("/api/videos", videoRoutes);
 app.use("/api/workouts", workoutRoutes);
 app.use("/api/chat", chatRoutes);
+app.use("/api/personalized-trainer", paymentRoute);
 
 // MongoDB connection
 const connectDB = async () => {
