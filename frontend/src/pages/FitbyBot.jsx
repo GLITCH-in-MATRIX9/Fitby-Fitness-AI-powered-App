@@ -11,7 +11,7 @@ const FitbyAI = () => {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // The scrollToBottom function is kept but is NOT called in handleSend.
+  // The scrollToBottom function is kept but is NOT called in handleSend
   // This ensures NO automatic scrolling happens after messages are exchanged
   const scrollToBottom = () => {
     setTimeout(() => {
