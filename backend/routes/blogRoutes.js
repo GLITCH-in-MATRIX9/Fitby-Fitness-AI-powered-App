@@ -1,8 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const multer = require("multer");
-const path = require("path");
 const authenticateToken = require("../middleware/auth");
+const upload = require("../middleware/upload"); // dynamic Cloudinary multer
 const {
   createBlog,
   getAllBlogs,
@@ -12,30 +11,36 @@ const {
   updateBlog,
 } = require("../controllers/blogController");
 
-// Multer configuration
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "uploads/"),
-  filename: (req, file, cb) => {
-    const unique = `${Date.now()}-${file.originalname.replace(/\s+/g, "_")}`;
-    cb(null, unique);
-  },
-});
+// ---------------------- 🎯 Blog Routes 🎯
 
-const upload = multer({
-  storage,
-  fileFilter: (req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase();
-    if ([".jpg", ".jpeg", ".png", ".webp"].includes(ext)) cb(null, true);
-    else cb(new Error("Only image files are allowed"));
-  },
-});
+// Create a new blog (with optional header image)
+// Header image will be uploaded to: fitby/blogs/{userId}/
+router.post(
+  "/",
+  authenticateToken,
+  upload.single("headerImage"),
+  createBlog
+);
 
-// Blog routes
-router.post("/", authenticateToken, upload.single("headerImage"), createBlog);
+// Get all blogs
 router.get("/", getAllBlogs);
+
+// Get blogs by specific user
 router.get("/user/:userId", getBlogsByUser);
+
+// Get a single blog by ID
 router.get("/:id", getBlogById);
+
+// Delete a blog by ID (requires auth)
 router.delete("/:id", authenticateToken, deleteBlog);
-router.put("/:id", authenticateToken, upload.single("headerImage"), updateBlog);
+
+// Update a blog by ID (with optional header image)
+// Updated header image will be uploaded to: fitby/blogs/{userId}/
+router.put(
+  "/:id",
+  authenticateToken,
+  upload.single("headerImage"),
+  updateBlog
+);
 
 module.exports = router;

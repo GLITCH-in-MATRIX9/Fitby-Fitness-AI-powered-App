@@ -1,26 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const multer = require("multer");
-const path = require("path");
+const upload = require("../middleware/upload"); // <-- dynamic Cloudinary upload middleware
 const User = require("../models/User");
 const authMiddleware = require("../middleware/auth");
 const bcrypt = require("bcryptjs");
 
-// Multer setup for storing profile images
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/");
-  },
-  filename: function (req, file, cb) {
-    const uniqueName = Date.now() + "-" + file.originalname;
-    cb(null, uniqueName);
-  },
-});
-const upload = multer({ storage });
-
 // @route   GET /api/user/profile
-// @desc    Get logged-in user profile
-// @access  Private
 router.get("/profile", authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
@@ -32,8 +17,6 @@ router.get("/profile", authMiddleware, async (req, res) => {
 });
 
 // @route   PUT /api/user/profile
-// @desc    Update logged-in user profile fields
-// @access  Private
 router.put("/profile", authMiddleware, async (req, res) => {
   try {
     const userId = req.user.id;
@@ -54,19 +37,17 @@ router.put("/profile", authMiddleware, async (req, res) => {
 });
 
 // @route   PUT /api/user/upload-profile-image
-// @desc    Upload and save profile image
-// @access  Private
 router.put(
   "/upload-profile-image",
   authMiddleware,
-  upload.single("image"),
+  upload.single("image"), // <--Cloudinary storage with fitby/users folder
   async (req, res) => {
     try {
       const userId = req.user.id;
       const updatedUser = await User.findByIdAndUpdate(
         userId,
         {
-          image: req.file.filename,
+          image: req.file.path, // Cloudinary URL
           updatedAt: new Date(),
         },
         { new: true }
@@ -81,11 +62,10 @@ router.put(
   }
 );
 
-router.get('/leaderboard', authMiddleware, async (req, res) => {
+// @route   GET /api/user/leaderboard
+router.get("/leaderboard", authMiddleware, async (req, res) => {
   try {
-    const users = await User.find({}, 'name points image') // fetch all users with selected fields
-      .sort({ points: -1 }); // sort by points desc
-
+    const users = await User.find({}, "name points image").sort({ points: -1 });
     res.json(users);
   } catch (err) {
     console.error("Error fetching leaderboard:", err);
@@ -93,10 +73,7 @@ router.get('/leaderboard', authMiddleware, async (req, res) => {
   }
 });
 
-
 // @route   POST /api/user/change-password
-// @desc    Change user password
-// @access  Private
 router.post("/change-password", authMiddleware, async (req, res) => {
   try {
     const { currentPassword, newPassword, confirmPassword } = req.body;
