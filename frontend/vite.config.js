@@ -5,5 +5,10 @@ import svgr from 'vite-plugin-svgr';
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [ svgr({ exportAsDefault: false }),react(), tailwindcss()],
+  plugins: [ svgr({ exportAsDefault: false }),react(), tailwindcss() ],
+  server: {
+    proxy: {
+      '/api': 'http://localhost:5000',
+    },
+  },
 })
