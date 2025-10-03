@@ -2,6 +2,11 @@ import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { FaPaperPlane, FaRobot, FaUser } from "react-icons/fa";
 
+// ----------------------------------------------------
+// ✅ FIX: Use the public Render URL instead of localhost
+// ----------------------------------------------------
+const BASE_API_URL = "https://fitby-fitness-ai-powered-app.onrender.com";
+
 const FitbyAI = () => {
   const messagesContainerRef = useRef(null);
   const inputRef = useRef(null);
@@ -35,7 +40,10 @@ const FitbyAI = () => {
     setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:5000/api/chat", {
+      // ----------------------------------------------------
+      // ✅ UPDATED API CALL: Uses the external public URL
+      // ----------------------------------------------------
+      const res = await axios.post(`${BASE_API_URL}/api/chat`, {
         message: userMessageContent,
       });
 
@@ -44,10 +52,12 @@ const FitbyAI = () => {
         { role: "assistant", content: res.data.reply },
       ]);
     } catch (err) {
-      console.error(err);
+      // Log the error for debugging
+      console.error("API Call Error:", err);
+      
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: "⚠️ Oops, something went wrong. Try again!" },
+        { role: "assistant", content: "⚠️ Oops, something went wrong. This might be a **CORS error** or the backend server is down. Check your network console!" },
       ]);
     } finally {
       setLoading(false);
@@ -89,12 +99,13 @@ const FitbyAI = () => {
                 )}
 
                 <div
-                  className={`px-4 py-3 max-w-xl text-base shadow-md ${
+                  className={`px-4 py-3 max-w-xl text-base shadow-md whitespace-pre-wrap ${
                     msg.role === "user"
                       ? "bg-[#ed6126] text-white rounded-t-xl rounded-bl-xl"
                       : "bg-gray-100 text-gray-800 rounded-t-xl rounded-br-xl border border-gray-200"
                   }`}
                 >
+                  {/* Note: I added whitespace-pre-wrap to handle markdown/line breaks if the API sends them */}
                   {msg.content}
                 </div>
 
@@ -147,4 +158,3 @@ const FitbyAI = () => {
 };
 
 export default FitbyAI;
-
