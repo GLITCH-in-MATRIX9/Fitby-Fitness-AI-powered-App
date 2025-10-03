@@ -61,6 +61,9 @@ const HeroSection = () => {
                                 alt="blog icon"
                                 className="h-6 w-6 rounded-full object-cover"
                             />
+                        </button>
+                    </Link>
+                </div>
                     {/* Motivational section below */}
                     <div className="flex flex-col items-center text-center mt-auto gap-4">
                         <p className="text-gray-500 text-sm">
