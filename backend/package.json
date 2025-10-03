@@ -12,6 +12,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@io-orkes/conductor-javascript": "^2.1.5",
     "axios": "^1.12.2",
     "bcrypt": "^6.0.0",
@@ -21,12 +22,14 @@
     "cors": "^2.8.5",
     "dotenv": "^17.2.0",
     "express": "^5.1.0",
+    "install": "^0.13.0",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.17.0",
     "mongoose": "^8.16.1",
     "multer": "^2.0.2",
-    "openai": "^5.23.0",
     "multer-storage-cloudinary": "^4.0.0",
+    "npm": "^11.6.1",
+    "openai": "^5.23.0",
     "stripe": "^18.5.0"
   },
   "devDependencies": {
