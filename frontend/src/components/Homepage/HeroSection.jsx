@@ -38,33 +38,9 @@ const HeroSection = () => {
         </div>
 
         {/* Right Column: 40% width with streak calendar at top */}
-        <div className="flex-[0.4] flex flex-col justify-start items-center gap-4">
+        <div className="flex-[0.4] flex flex-col justify-start items-center gap-2">
           {/* Streak Calendar at top */}
           <StreakCalender />
-
-          {/* Buttons */}
-          <div className="flex flex-col w-full items-center gap-4 mt-4">
-            <Link to="/ai">
-              <button className="bg-white text-gray-900 font-semibold px-5 py-2 rounded-md hover:bg-gray-200 transition w-full">
-                Try Fitby-AI
-              </button>
-            </Link>
-            <Link to="/diet-plan">
-              <button className="bg-[#c41037] text-white font-semibold px-5 py-2 rounded-md shadow hover:bg-[#a30d2c] transition w-full">
-                Generate Diet Plan
-              </button>
-            </Link>
-            <Link to="/blogs">
-              <button className="bg-white text-gray-900 font-semibold px-5 py-2 rounded-md flex items-center gap-2 shadow hover:bg-gray-100 transition w-full">
-                <span>Read New Blogs</span>
-                <img
-                  src={heroBg}
-                  alt="blog icon"
-                  className="h-6 w-6 rounded-full object-cover"
-                />
-              </button>
-            </Link>
-          </div>
 
           {/* Motivational section below */}
           <div className="flex flex-col items-center text-center mt-auto gap-4">

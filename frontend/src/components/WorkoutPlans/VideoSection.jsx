@@ -33,7 +33,7 @@ const VideoSection = ({ muscle, gender, newVideo }) => {
       setError("");
       try {
         const res = await fetch(
-          `http://localhost:5000/api/videos?muscle=${muscle}&gender=${gender}`
+          `https://fitby-fitness-ai-powered-app.onrender.com/api/videos?muscle=${muscle}&gender=${gender}`
         );
         if (!res.ok) throw new Error("Failed to fetch videos");
         const data = await res.json();
@@ -283,8 +283,8 @@ const VideoSection = ({ muscle, gender, newVideo }) => {
               </p>
 
               <div className={`mb-4 p-3 rounded-lg flex items-center transition-colors duration-300 ${skipDetected
-                  ? "bg-red-100 border border-red-400 text-red-700"
-                  : "bg-blue-50 border border-blue-200 text-blue-700"
+                ? "bg-red-100 border border-red-400 text-red-700"
+                : "bg-blue-50 border border-blue-200 text-blue-700"
                 }`}
               >
                 <svg className="w-5 h-5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
