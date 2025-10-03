@@ -17,6 +17,7 @@
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.2",
     "cloudinary": "^1.30.0",
+    "conductor-javascript": "^0.0.6",
     "cors": "^2.8.5",
     "dotenv": "^17.2.0",
     "express": "^5.1.0",
@@ -24,6 +25,7 @@
     "mongodb": "^6.17.0",
     "mongoose": "^8.16.1",
     "multer": "^2.0.2",
+    "openai": "^5.23.0",
     "multer-storage-cloudinary": "^4.0.0",
     "stripe": "^18.5.0"
   },
