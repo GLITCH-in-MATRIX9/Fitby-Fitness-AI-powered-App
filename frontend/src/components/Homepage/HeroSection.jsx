@@ -42,6 +42,25 @@ const HeroSection = () => {
                     {/* Streak Calendar at top */}
                     <StreakCalender />
 
+                <div className="flex items-center gap-4">
+                    <Link to="/ai">
+                        <button className="bg-white text-gray-900 font-semibold px-5 py-2 rounded-md hover:bg-gray-200 transition">
+                            Try Fitby-AI
+                        </button>
+                    </Link>
+                    <Link to="/diet-plan">
+                        <button className="bg-[#c41037] text-white font-semibold px-5 py-2 rounded-md shadow hover:bg-[#a30d2c] transition">
+                            Generate Diet Plan
+                        </button>
+                    </Link>
+                    <Link to="/blogs">
+                        <button className="bg-white text-gray-900 font-semibold px-5 py-2 rounded-md flex items-center gap-2 shadow hover:bg-gray-100 transition">
+                            <span>Read New Blogs</span>
+                            <img
+                                src={heroBg}
+                                alt="blog icon"
+                                className="h-6 w-6 rounded-full object-cover"
+                            />
                     {/* Motivational section below */}
                     <div className="flex flex-col items-center text-center mt-auto gap-4">
                         <p className="text-gray-500 text-sm">

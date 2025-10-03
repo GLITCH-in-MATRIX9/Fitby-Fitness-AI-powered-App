@@ -9,6 +9,8 @@ const userRoutes = require("./routes/user");
 const blogRoutes = require("./routes/blogRoutes");
 const videoRoutes = require("./routes/videoRoutes");
 const workoutRoutes = require("./routes/workoutRoutes");
+const aiDietPlanRoutes = require("./routes/aiDietPlanRoutes");
+
 const chatRoutes = require("./routes/chatRoutes"); // GPT4All chat route
 const paymentRoute = require("./routes/payment");
 
@@ -40,6 +42,7 @@ app.use("/api/user", userRoutes);
 app.use("/api/blogs", blogRoutes);
 app.use("/api/videos", videoRoutes);
 app.use("/api/workouts", workoutRoutes);
+app.use("/api/orkes-diet", aiDietPlanRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/personalized-trainer", paymentRoute);
 

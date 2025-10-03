@@ -7,6 +7,7 @@ import WorkOut from './assets/WorkOutPlans';
 import PersonalizedTrainer from './pages/PersonalizedTrainer';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import DietPlanPage from './pages/DietPlanPage';
 import LoginPage from './pages/LoginPage';
 import FitbyBot from './pages/FitbyBot';
 import MaleWorkout from './components/WorkoutPlans/MaleWorkout';
@@ -45,6 +46,9 @@ const AppContent = () => {
         <Route path='/admin' element={<AdminForm />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/change-password" element={<ChangePassword />} />
+
+  {/* New Diet Plan Page */}
+  <Route path="/diet-plan" element={<DietPlanPage />} />
 
         {/* Profile layout and nested routes */}
         <Route path="/profile" element={<DashboardLayout />}>
