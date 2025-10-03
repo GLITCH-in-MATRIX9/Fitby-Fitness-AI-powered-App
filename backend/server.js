@@ -11,22 +11,25 @@ const videoRoutes = require("./routes/videoRoutes");
 const workoutRoutes = require("./routes/workoutRoutes");
 const aiDietPlanRoutes = require("./routes/aiDietPlanRoutes");
 
+const chatRoutes = require("./routes/chatRoutes"); // GPT4All chat route
+const paymentRoute = require("./routes/payment");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-
+// CORS
 app.use(cors({
   origin: [
     "http://localhost:5173",
     "https://fitby-fitness-ai-powered-app-in6l.vercel.app",
-    "https://fitby-fitness-ai-powered-git-cf2b3f-glitch-in-matrix9s-projects.vercel.app", // optional preview
-    "https://fitby-fitness-ai-powered-app-in6l-pb8o9dxn7.vercel.app" // optional preview
+    "https://fitby-fitness-ai-powered-app-in6l.vercel.app",
+    "https://fitby-fitness-ai-powered-git-cf2b3f-glitch-in-matrix9s-projects.vercel.app",
+    "https://fitby-fitness-ai-powered-app-in6l-pb8o9dxn7.vercel.app" 
   ],
   credentials: true,
 }));
 
-
+// Body parsers
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
@@ -40,11 +43,14 @@ app.use("/api/blogs", blogRoutes);
 app.use("/api/videos", videoRoutes);
 app.use("/api/workouts", workoutRoutes);
 app.use("/api/orkes-diet", aiDietPlanRoutes);
+app.use("/api/chat", chatRoutes);
+app.use("/api/personalized-trainer", paymentRoute);
 
 // MongoDB connection
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI);
+    const mongoURI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/fitnessAppDB";
+    await mongoose.connect(mongoURI);
     console.log("✅ MongoDB connected successfully");
 
     app.listen(PORT, () => {
