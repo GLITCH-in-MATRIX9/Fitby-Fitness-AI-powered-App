@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "title": "Track Progress",
+    "subheading": "Monitor your workouts in real-time and visualize your fitness journey every step of the way.",
+    "icon": "src/assets/icons/progress-icon.png"
+  },
+  {
+    "id": 2,
+    "title": "AI Guide",
+    "subheading": "Get personalized fitness guidance, meal suggestions, and smart workout plans powered by AI.",
+    "icon": "src/assets/icons/ai.png"
+  },
+  {
+    "id": 3,
+    "title": "Daily Reports",
+    "subheading": "Receive detailed daily reports to track improvements, identify gaps, and stay motivated.",
+    "icon": "src/assets/icons/report.png"
+  }
+]
