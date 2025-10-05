@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { NavLink } from "react-router-dom";
-import { FaUser, FaDumbbell, FaHistory, FaCog, FaRegNewspaper } from "react-icons/fa";
+import { FaUser, FaDumbbell, FaHistory, FaCog, FaRegNewspaper ,FaAppleAlt} from "react-icons/fa";
 import { AuthContext } from "../../context/AuthContext";
 
 const Sidebar = () => {
@@ -13,6 +13,8 @@ const Sidebar = () => {
     { to: "/profile/history", icon: <FaHistory />, label: "Workout History" },
     { to: "/profile/settings", icon: <FaCog />, label: "Settings" },
     { to: "/profile/blogs", icon: <FaRegNewspaper />, label: "Manage Blogs" },
+    { to: "/profile/diet-plan", icon: <FaAppleAlt />, label: "Generate Diet Plan" }, // new link
+
   ];
 
   return (

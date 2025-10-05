@@ -1,7 +1,15 @@
 import React from 'react';
 import heroBg from '../../assets/herosectionimage.jpg';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom'; // Keep Link for other buttons
 import StreakCalender from '../Homepage/StreakCalender';
+
+// 🚨 IMPORTANT: Replace this placeholder URL with your actual Streamlit application link
+const STREAMLIT_URL = 'http://192.168.160.99:8501';
+
+const handleStreamlitClick = () => {
+  // Direct navigation/redirection outside of React Router
+  window.open(STREAMLIT_URL, '_blank'); 
+};
 
 const HeroSection = () => {
   return (
@@ -12,6 +20,7 @@ const HeroSection = () => {
         <div
           className="flex-[2] flex flex-col justify-end px-6 py-6 rounded-xl bg-cover bg-center opacity-90"
           style={{ backgroundImage: `url(${heroBg})` }}
+
         >
           <h1 className="text-4xl sm:text-5xl font-extrabold leading-tight mb-4 text-shadow-md">
             Unlock your true potential with
@@ -19,11 +28,22 @@ const HeroSection = () => {
             <span className="text-white">Fitness and health guru</span>
           </h1>
           <div className="flex items-center gap-4">
+            {/* Existing Fitby-AI Button (Keeps internal React Router Link) */}
             <Link to="/ai">
               <button className="bg-white text-gray-900 font-semibold px-5 py-2 rounded-md hover:bg-gray-200 transition">
                 Try Fitby-AI
               </button>
             </Link>
+
+            {/* 👇 MUSCLE PREDICTION BUTTON: DIRECT STREAMLIT LINK 👇 */}
+            <button 
+              className="bg-white text-gray-900 font-semibold px-5 py-2 rounded-md hover:bg-gray-200 transition"
+              onClick={handleStreamlitClick} // Calls the function for direct redirect
+            >
+              Predict Muscle Focus
+            </button>
+            {/* 👆 END OF DIRECT LINK BUTTON 👆 */}
+
             <Link to="/blogs">
               <button className="bg-white text-gray-900 font-semibold px-5 py-2 rounded-md flex items-center gap-2 shadow hover:bg-gray-100 transition">
                 <span>Read New Blogs</span>
@@ -38,33 +58,9 @@ const HeroSection = () => {
         </div>
 
         {/* Right Column: 40% width with streak calendar at top */}
-        <div className="flex-[0.4] flex flex-col justify-start items-center gap-4">
+        <div className="flex-[0.4] flex flex-col justify-start items-center gap-2">
           {/* Streak Calendar at top */}
           <StreakCalender />
-
-          {/* Buttons */}
-          <div className="flex flex-col w-full items-center gap-4 mt-4">
-            <Link to="/ai">
-              <button className="bg-white text-gray-900 font-semibold px-5 py-2 rounded-md hover:bg-gray-200 transition w-full">
-                Try Fitby-AI
-              </button>
-            </Link>
-            <Link to="/diet-plan">
-              <button className="bg-[#c41037] text-white font-semibold px-5 py-2 rounded-md shadow hover:bg-[#a30d2c] transition w-full">
-                Generate Diet Plan
-              </button>
-            </Link>
-            <Link to="/blogs">
-              <button className="bg-white text-gray-900 font-semibold px-5 py-2 rounded-md flex items-center gap-2 shadow hover:bg-gray-100 transition w-full">
-                <span>Read New Blogs</span>
-                <img
-                  src={heroBg}
-                  alt="blog icon"
-                  className="h-6 w-6 rounded-full object-cover"
-                />
-              </button>
-            </Link>
-          </div>
 
           {/* Motivational section below */}
           <div className="flex flex-col items-center text-center mt-auto gap-4">

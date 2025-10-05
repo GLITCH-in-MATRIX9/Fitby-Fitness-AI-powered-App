@@ -1,10 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { FaPaperPlane, FaRobot, FaUser } from "react-icons/fa";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
-// ----------------------------------------------------
-// ✅ FIX: Use the public Render URL instead of localhost
-// ----------------------------------------------------
 const BASE_API_URL = "https://fitby-fitness-ai-powered-app.onrender.com";
 
 const FitbyAI = () => {
@@ -40,9 +39,6 @@ const FitbyAI = () => {
     setLoading(true);
 
     try {
-      // ----------------------------------------------------
-      // ✅ UPDATED API CALL: Uses the external public URL
-      // ----------------------------------------------------
       const res = await axios.post(`${BASE_API_URL}/api/chat`, {
         message: userMessageContent,
       });
@@ -52,12 +48,15 @@ const FitbyAI = () => {
         { role: "assistant", content: res.data.reply },
       ]);
     } catch (err) {
-      // Log the error for debugging
       console.error("API Call Error:", err);
-      
+
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: "⚠️ Oops, something went wrong. This might be a **CORS error** or the backend server is down. Check your network console!" },
+        {
+          role: "assistant",
+          content:
+            "⚠ Oops, something went wrong. This might be a CORS error or the backend server is down. Check your network console!",
+        },
       ]);
     } finally {
       setLoading(false);
@@ -90,7 +89,9 @@ const FitbyAI = () => {
             {messages.map((msg, idx) => (
               <div
                 key={idx}
-                className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                className={`flex ${
+                  msg.role === "user" ? "justify-end" : "justify-start"
+                }`}
               >
                 {msg.role !== "user" && (
                   <div className="flex-shrink-0 mr-3 mt-1 text-[#ed6126] text-xl">
@@ -99,14 +100,15 @@ const FitbyAI = () => {
                 )}
 
                 <div
-                  className={`px-4 py-3 max-w-xl text-base shadow-md whitespace-pre-wrap ${
+                  className={`px-4 py-3 max-w-xl text-base shadow-md ${
                     msg.role === "user"
                       ? "bg-[#ed6126] text-white rounded-t-xl rounded-bl-xl"
                       : "bg-gray-100 text-gray-800 rounded-t-xl rounded-br-xl border border-gray-200"
                   }`}
                 >
-                  {/* Note: I added whitespace-pre-wrap to handle markdown/line breaks if the API sends them */}
-                  {msg.content}
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {msg.content}
+                  </ReactMarkdown>
                 </div>
 
                 {msg.role === "user" && (

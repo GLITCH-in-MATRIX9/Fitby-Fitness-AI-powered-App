@@ -48,45 +48,69 @@ const DietPlanPage = () => {
       <div className="max-w-2xl w-full mx-auto mt-10 bg-white bg-opacity-90 rounded-xl shadow-lg p-8">
         <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Personalized Diet Plan Generator</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block font-semibold mb-1">Age</label>
-          <input type="number" name="age" value={form.age} onChange={handleChange} required className="w-full border rounded px-3 py-2" />
-        </div>
-        <div>
-          <label className="block font-semibold mb-1">Gender</label>
-          <select name="gender" value={form.gender} onChange={handleChange} required className="w-full border rounded px-3 py-2">
-            <option value="">Select</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-        <div>
-          <label className="block font-semibold mb-1">Weight (kg)</label>
-          <input type="number" name="weight" value={form.weight} onChange={handleChange} required className="w-full border rounded px-3 py-2" />
-        </div>
-        <div>
-          <label className="block font-semibold mb-1">Fitness Goal</label>
-          <input type="text" name="fitnessGoal" value={form.fitnessGoal} onChange={handleChange} required className="w-full border rounded px-3 py-2" placeholder="e.g. Weight Gain, Weight Loss, Maintenance" />
-        </div>
-        <div>
-          <label className="block font-semibold mb-1">Preferences / Allergies</label>
-          <input type="text" name="preferences" value={form.preferences} onChange={handleChange} className="w-full border rounded px-3 py-2" placeholder="e.g. Vegetarian, Nut allergy, etc." />
-        </div>
-        <button type="submit" className="w-full bg-[#c41037] text-white font-bold py-2 rounded hover:bg-[#a30d2c] transition flex items-center justify-center" disabled={loading}>
-          {loading ? (
-            <>
-              <span className="mr-2">Generating...</span>
-              <span className="inline-block w-5 h-5 border-2 border-t-transparent border-white rounded-full animate-spin"></span>
-            </>
-          ) : 'Generate Diet Plan'}
-        </button>
-      </form>
+          <div>
+            <label className="block font-semibold mb-1">Age</label>
+            <input type="number" name="age" value={form.age} onChange={handleChange} required className="w-full border rounded px-3 py-2" />
+          </div>
+          <div>
+            <label className="block font-semibold mb-1">Gender</label>
+            <select name="gender" value={form.gender} onChange={handleChange} required className="w-full border rounded px-3 py-2">
+              <option value="">Select</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div>
+            <label className="block font-semibold mb-1">Weight (kg)</label>
+            <input type="number" name="weight" value={form.weight} onChange={handleChange} required className="w-full border rounded px-3 py-2" />
+          </div>
+          <div>
+            <label className="block font-semibold mb-1">Fitness Goal</label>
+            <input type="text" name="fitnessGoal" value={form.fitnessGoal} onChange={handleChange} required className="w-full border rounded px-3 py-2" placeholder="e.g. Weight Gain, Weight Loss, Maintenance" />
+          </div>
+          <div>
+            <label className="block font-semibold mb-1">Preferences / Allergies</label>
+            <input type="text" name="preferences" value={form.preferences} onChange={handleChange} className="w-full border rounded px-3 py-2" placeholder="e.g. Vegetarian, Nut allergy, etc." />
+          </div>
+          <button type="submit" className="w-full bg-[#c41037] text-white font-bold py-2 rounded hover:bg-[#a30d2c] transition flex items-center justify-center" disabled={loading}>
+            {loading ? (
+              <>
+                <span className="mr-2">Generating...</span>
+                <span className="inline-block w-5 h-5 border-2 border-t-transparent border-white rounded-full animate-spin"></span>
+              </>
+            ) : 'Generate Diet Plan'}
+          </button>
+        </form>
         {error && <div className="mt-4 text-red-600 text-center">{error}</div>}
         {result && (
           <div className="mt-8">
+            {/* Download Button */}
+            <div className="flex justify-end mb-2">
+              <button
+                onClick={() => {
+                  const csvRows = [
+                    ['Day', 'Meal Time', 'Item', 'Calories'],
+                    ...result.planDetails.flatMap(day =>
+                      day.meals.map(meal => [day.day, meal.time, meal.item, meal.calories])
+                    ),
+                  ];
+                  const csvContent = csvRows.map(e => e.join(",")).join("\n");
+                  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                  const link = document.createElement("a");
+                  link.href = URL.createObjectURL(blob);
+                  link.download = `${result.planName.replace(/\s+/g, "_")}_DietPlan.csv`;
+                  link.click();
+                }}
+                className="bg-[#ed6126] text-white px-4 py-2 rounded hover:bg-[#c45020] transition"
+              >
+                Download Plan
+              </button>
+            </div>
             <h3 className="text-xl font-semibold mb-2 text-[#c41037]">{result.planName}</h3>
-            <div className="mb-2 text-gray-700">Estimated Daily Calories: <span className="font-bold">{result.dailyCalories}</span></div>
+            <div className="mb-2 text-gray-700">
+              Estimated Daily Calories: <span className="font-bold">{result.dailyCalories}</span>
+            </div>
             <div className="overflow-x-auto">
               <table className="min-w-full border text-sm">
                 <thead>
@@ -98,18 +122,20 @@ const DietPlanPage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {result.planDetails.map((day, i) => (
+                  {result.planDetails.map((day, i) =>
                     day.meals.map((meal, j) => (
                       <tr key={i + '-' + j}>
                         {j === 0 && (
-                          <td className="border px-2 py-1 font-bold" rowSpan={day.meals.length}>{day.day}</td>
+                          <td className="border px-2 py-1 font-bold" rowSpan={day.meals.length}>
+                            {day.day}
+                          </td>
                         )}
                         <td className="border px-2 py-1">{meal.time}</td>
                         <td className="border px-2 py-1">{meal.item}</td>
                         <td className="border px-2 py-1">{meal.calories}</td>
                       </tr>
                     ))
-                  ))}
+                  )}
                 </tbody>
               </table>
             </div>

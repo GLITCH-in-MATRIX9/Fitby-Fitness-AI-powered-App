@@ -3,10 +3,13 @@ import { Pose } from "@mediapipe/pose";
 import { Camera } from "@mediapipe/camera_utils";
 import { drawConnectors, drawLandmarks } from "@mediapipe/drawing_utils";
 
-const PoseTracker = ({ onAnglesUpdate }) => {
+const PoseTracker = ({ exerciseName, onScoreUpdate, onSquatTimerUpdate }) => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const cameraRef = useRef(null);
+
+  const squatStartTime = useRef(null);
+  const score = useRef(0);
 
   const getAngle = (a, b, c) => {
     const ab = { x: b.x - a.x, y: b.y - a.y };
@@ -34,14 +37,12 @@ const PoseTracker = ({ onAnglesUpdate }) => {
       const ctx = canvasRef.current.getContext("2d");
       const video = videoRef.current;
 
-      // Draw webcam frame first
       ctx.save();
       ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
       ctx.drawImage(video, 0, 0, canvasRef.current.width, canvasRef.current.height);
       ctx.restore();
 
       if (results.poseLandmarks) {
-        // Draw skeleton on top
         drawConnectors(ctx, results.poseLandmarks, Pose.POSE_CONNECTIONS, {
           color: "#00FF00",
           lineWidth: 4,
@@ -51,7 +52,6 @@ const PoseTracker = ({ onAnglesUpdate }) => {
           lineWidth: 2,
         });
 
-        // Example: Squat knees
         const leftHip = results.poseLandmarks[23];
         const leftKnee = results.poseLandmarks[25];
         const leftAnkle = results.poseLandmarks[27];
@@ -62,22 +62,32 @@ const PoseTracker = ({ onAnglesUpdate }) => {
         const leftKneeAngle = getAngle(leftHip, leftKnee, leftAnkle);
         const rightKneeAngle = getAngle(rightHip, rightKnee, rightAnkle);
 
-        onAnglesUpdate && onAnglesUpdate({ leftKneeAngle, rightKneeAngle });
-
-        // Display angles on canvas
-        ctx.font = "18px Arial";
-        ctx.fillStyle = "yellow";
-        ctx.fillText(`Left Knee: ${Math.round(leftKneeAngle)}°`, 10, 30);
-        ctx.fillText(`Right Knee: ${Math.round(rightKneeAngle)}°`, 10, 60);
-
-        // Feedback
+        // --- Good squat logic ---
         if (leftKneeAngle < 90 && rightKneeAngle < 90) {
           ctx.fillStyle = "green";
           ctx.fillText("Good Squat!", 10, 90);
+
+          if (!squatStartTime.current) {
+            squatStartTime.current = Date.now();
+          } else {
+            const duration = (Date.now() - squatStartTime.current) / 1000;
+            onSquatTimerUpdate && onSquatTimerUpdate(duration.toFixed(1)); // live timer
+            if (duration > 10) {
+              score.current += 1;
+              onScoreUpdate && onScoreUpdate(score.current);
+              squatStartTime.current = null; // reset for next hold
+            }
+          }
         } else {
           ctx.fillStyle = "red";
           ctx.fillText("Bend knees more!", 10, 90);
+          squatStartTime.current = null;
+          onSquatTimerUpdate && onSquatTimerUpdate(0); // reset timer
         }
+
+        // Show live score
+        ctx.fillStyle = "orange";
+        ctx.fillText(`Score: ${score.current}`, 10, 120);
       }
     });
 
@@ -89,13 +99,13 @@ const PoseTracker = ({ onAnglesUpdate }) => {
     cameraRef.current.start();
 
     return () => cameraRef.current?.stop();
-  }, [onAnglesUpdate]);
+  }, [onScoreUpdate, onSquatTimerUpdate]);
 
   return (
     <div style={{ position: "relative", width: "100%", height: "360px" }}>
       <video
         ref={videoRef}
-        style={{ display: "none" }} // still hidden because canvas now shows video
+        style={{ display: "none" }}
         width={480}
         height={360}
         autoPlay
@@ -103,7 +113,7 @@ const PoseTracker = ({ onAnglesUpdate }) => {
       />
       <canvas
         ref={canvasRef}
-        width={480}
+        width={550}
         height={360}
         style={{ position: "absolute", top: 0, left: 0 }}
       />

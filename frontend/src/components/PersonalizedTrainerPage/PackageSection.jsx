@@ -81,7 +81,7 @@ const PackageSection = () => {
   const packages = [
     {
       name: "Basic Plan",
-      price: 299,
+      price: 29,
       popular: false,
       description: "Perfect for beginners starting their fitness journey",
       features: [
@@ -94,7 +94,7 @@ const PackageSection = () => {
     },
     {
       name: "Regular Plan",
-      price: 399,
+      price: 39,
       popular: true,
       description: "Most popular choice for dedicated fitness enthusiasts",
       features: [
@@ -107,7 +107,7 @@ const PackageSection = () => {
     },
     {
       name: "Premium Plan",
-      price: 599,
+      price: 59,
       popular: false,
       description: "Complete package for serious athletes and professionals",
       features: [

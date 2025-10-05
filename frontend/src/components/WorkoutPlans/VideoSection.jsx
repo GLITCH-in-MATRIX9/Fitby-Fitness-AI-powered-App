@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import PoseTracker from "./PoseTracker";
 
-// --- Utility to extract YouTube ID ---
 const getYouTubeId = (url) => {
   if (!url) return null;
   const match = url.match(
@@ -10,7 +9,6 @@ const getYouTubeId = (url) => {
   return match ? match[1] : null;
 };
 
-// --- Component ---
 const VideoSection = ({ muscle, gender, newVideo }) => {
   const [videos, setVideos] = useState([]);
   const [selectedVideo, setSelectedVideo] = useState(null);
@@ -21,12 +19,14 @@ const VideoSection = ({ muscle, gender, newVideo }) => {
   const [videoDuration, setVideoDuration] = useState(0);
   const [rewardStatus, setRewardStatus] = useState({ half: false, full: false });
   const [skipDetected, setSkipDetected] = useState(false);
+  const [squatScore, setSquatScore] = useState(0);
+  const [squatTimer, setSquatTimer] = useState(0);
+
 
   const playerRef = useRef(null);
   const intervalRef = useRef(null);
   const ytScriptLoaded = useRef(false);
 
-  // --- Fetch videos ---
   useEffect(() => {
     const fetchVideos = async () => {
       setLoading(true);
@@ -47,12 +47,10 @@ const VideoSection = ({ muscle, gender, newVideo }) => {
     fetchVideos();
   }, [muscle, gender]);
 
-  // --- Add new video dynamically ---
   useEffect(() => {
     if (newVideo) setVideos((prev) => [newVideo, ...prev]);
   }, [newVideo]);
 
-  // --- Progress Tracking ---
   const stopProgressTracking = useCallback(() => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
@@ -70,15 +68,14 @@ const VideoSection = ({ muscle, gender, newVideo }) => {
     const currentTime = player.getCurrentTime();
 
     setViewTime((prevTime) => {
-      const skipTolerance = 2;
+      const skipTolerance = 1;
       const isSkipping = prevTime > 0 && Math.abs(currentTime - prevTime) > skipTolerance;
 
-      if (isSkipping) {
+      if (isSkipping && currentTime < videoDuration * 0.95) {
         stopProgressTracking();
         setRewardStatus({ half: false, full: false });
         setSkipDetected(true);
         player.pauseVideo();
-        console.warn(`Skipping detected! Progress reset.`);
         return 0;
       }
 
@@ -92,15 +89,8 @@ const VideoSection = ({ muscle, gender, newVideo }) => {
       const fullThreshold = videoDuration;
 
       let newStatus = { ...prev };
-      if (currentTime >= halfThreshold && !prev.half) {
-        newStatus.half = true;
-        console.log("Reward granted: Half Video Completed!");
-      }
-      if (currentTime >= fullThreshold && !prev.full) {
-        newStatus.full = true;
-        stopProgressTracking();
-        console.log("Reward granted: FULL Video Completed!");
-      }
+      if (currentTime >= halfThreshold && !prev.half) newStatus.half = true;
+      if (currentTime >= fullThreshold && !prev.full) newStatus.full = true;
       return newStatus;
     });
   }, [videoDuration, skipDetected, stopProgressTracking]);
@@ -110,7 +100,6 @@ const VideoSection = ({ muscle, gender, newVideo }) => {
     intervalRef.current = setInterval(updateProgress, 500);
   }, [updateProgress]);
 
-  // --- Load YouTube API script once ---
   useEffect(() => {
     if (!ytScriptLoaded.current) {
       if (typeof window.YT === "undefined" || !window.YT.Player) {
@@ -122,17 +111,13 @@ const VideoSection = ({ muscle, gender, newVideo }) => {
     }
   }, []);
 
-  // --- Initialize YouTube Player ---
   useEffect(() => {
     if (!selectedVideo) return;
-
     const videoId = getYouTubeId(selectedVideo.videoUrl);
     if (!videoId) return;
 
     const initPlayer = () => {
-      if (playerRef.current && typeof playerRef.current.destroy === "function") {
-        playerRef.current.destroy();
-      }
+      if (playerRef.current?.destroy) playerRef.current.destroy();
 
       playerRef.current = new window.YT.Player("player-container", {
         videoId,
@@ -142,56 +127,46 @@ const VideoSection = ({ muscle, gender, newVideo }) => {
           onStateChange: (event) => {
             if (event.data === window.YT.PlayerState.PLAYING) startProgressTracking();
             else stopProgressTracking();
+            if (event.data === window.YT.PlayerState.ENDED)
+              setRewardStatus((prev) => ({ ...prev, full: true }));
           },
         },
       });
     };
 
-    if (window.YT && window.YT.Player) {
-      initPlayer();
-    } else {
-      window.onYouTubeIframeAPIReady = initPlayer;
-    }
+    if (window.YT && window.YT.Player) initPlayer();
+    else window.onYouTubeIframeAPIReady = initPlayer;
 
     return () => {
       stopProgressTracking();
       if (window.onYouTubeIframeAPIReady === initPlayer) window.onYouTubeIframeAPIReady = null;
-      if (playerRef.current && typeof playerRef.current.destroy === "function") {
-        playerRef.current.destroy();
-      }
+      if (playerRef.current?.destroy) playerRef.current.destroy();
     };
   }, [selectedVideo, startProgressTracking, stopProgressTracking]);
 
-  // --- Handlers ---
   const handleVideoSelect = (video) => {
     setSelectedVideo(video);
     setViewTime(0);
     setVideoDuration(0);
     setRewardStatus({ half: false, full: false });
     setSkipDetected(false);
+    setSquatScore(0);
     stopProgressTracking();
   };
 
   const handleModalClose = useCallback(() => {
     setSelectedVideo(null);
     setSkipDetected(false);
+    setSquatScore(0);
     stopProgressTracking();
-    if (playerRef.current && typeof playerRef.current.destroy === "function") {
-      playerRef.current.destroy();
-    }
+    if (playerRef.current?.destroy) playerRef.current.destroy();
   }, [stopProgressTracking]);
 
   const progressPercentage = videoDuration ? (viewTime / videoDuration) * 100 : 0;
 
-  // --- Render ---
   if (loading) return <p className="p-4 text-gray-500">Loading videos...</p>;
   if (error) return <p className="p-4 text-red-500">Error: {error}</p>;
-  if (videos.length === 0)
-    return (
-      <p className="p-4 text-gray-500">
-        No videos found for {muscle} ({gender}).
-      </p>
-    );
+  if (!videos.length) return <p className="p-4 text-gray-500">No videos found for {muscle} ({gender}).</p>;
 
   return (
     <div className="p-4 bg-white rounded-xl shadow-lg mt-6">
@@ -200,7 +175,6 @@ const VideoSection = ({ muscle, gender, newVideo }) => {
         {gender.charAt(0).toUpperCase() + gender.slice(1)}
       </h3>
 
-      {/* Video Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {videos.map((video) => {
           const id = getYouTubeId(video.videoUrl);
@@ -217,16 +191,11 @@ const VideoSection = ({ muscle, gender, newVideo }) => {
                 className="w-full h-40 object-cover"
                 onError={(e) => {
                   e.target.onerror = null;
-                  e.target.src =
-                    "https://placehold.co/640x360/ccc/fff?text=No+Thumbnail";
+                  e.target.src = "https://placehold.co/740x360/ccc/fff?text=No+Thumbnail";
                 }}
               />
               <div className="absolute inset-0 flex items-center justify-center bg-opacity-25 hover:bg-opacity-50 transition">
-                <svg
-                  className="w-14 h-14 text-white opacity-90 transition-opacity"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
+                <svg className="w-14 h-14 text-white opacity-90 transition-opacity" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M8 5v14l11-7z" />
                 </svg>
               </div>
@@ -238,14 +207,9 @@ const VideoSection = ({ muscle, gender, newVideo }) => {
         })}
       </div>
 
-      {/* Modal */}
       {selectedVideo && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 p-4"
-          style={{ backdropFilter: "blur(8px)" }}
-        >
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 p-4" style={{ backdropFilter: "blur(8px)" }}>
           <div className="bg-white rounded-xl w-full max-w-6xl overflow-hidden shadow-2xl relative transform transition-all duration-300">
-            {/* Close Button */}
             <button
               className="absolute top-2 right-2 text-gray-400 hover:text-red-500 text-3xl z-10 p-2 leading-none"
               onClick={handleModalClose}
@@ -253,81 +217,51 @@ const VideoSection = ({ muscle, gender, newVideo }) => {
               &times;
             </button>
 
-            {/* Flex container: YouTube Left, PoseTracker Right */}
-            <div className="flex flex-col lg:flex-row">
-              {/* Left: YouTube Player */}
-              <div className="flex-1 bg-black">
-                <div id="player-container" className="aspect-video w-full bg-black flex items-center justify-center text-white">
-                  Loading Video Player...
+            <div className="flex flex-col lg:flex-row gap-4 p-4">
+              <div className="flex flex-col flex-1 space-y-4">
+                <div className="bg-black rounded-xl overflow-hidden shadow-md">
+                  <div id="player-container" className="w-full aspect-video bg-black flex items-center justify-center text-white">
+                    Loading Video Player...
+                  </div>
+                </div>
+
+                <div className="bg-gray-50 p-4 rounded-xl shadow-inner border border-gray-200">
+                  <h4 className="text-lg font-semibold mb-3 text-gray-800">Rewards</h4>
+                  <div className="flex flex-col space-y-3">
+                    <div className={`flex items-center space-x-2 p-2 rounded-lg transition-colors ${rewardStatus.half ? "bg-green-100 text-green-700 shadow-sm" : "bg-gray-100 text-gray-400"}`}>
+                      <span className="text-xl">{rewardStatus.half ? "✅" : "⚪"}</span>
+                      <span className="text-sm font-medium">
+                        Half Completed Reward ({Math.floor(videoDuration * 0.5)}s)
+                      </span>
+                    </div>
+
+                    <div className={`flex items-center space-x-2 p-2 rounded-lg transition-colors ${rewardStatus.full ? "bg-[#e9632e]/10 text-[#e9632e] border border-[#e9632e]/50 shadow-sm" : "bg-gray-100 text-gray-400"}`}>
+                      <span className="text-xl">{rewardStatus.full ? "🏆" : "⚪"}</span>
+                      <span className="text-sm font-medium">
+                        Full Completion Reward ({Math.floor(videoDuration)}s)
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              {/* Right: Pose Tracker */}
-              <div className="flex-1 p-4 bg-gray-50">
-                <h2 className="text-xl font-bold mb-2">Posture Tracker</h2>
+              <div className="flex-1 bg-gray-100 rounded-xl flex flex-col items-center justify-center border border-gray-200 p-4">
                 <PoseTracker
-                  onAnglesUpdate={(angles) => {
-                    // Optional: use angles for rewards/feedback
-                    console.log("Angles:", angles);
-                  }}
+                  exerciseName={selectedVideo.exerciseName || "workout"}
+                  onScoreUpdate={setSquatScore}
+                  onSquatTimerUpdate={setSquatTimer}
                 />
-              </div>
-            </div>
-
-            {/* Progress & Rewards Section (unchanged) */}
-            <div className="p-6 bg-gray-50 border-t border-gray-200">
-              <h2 className="text-2xl font-extrabold text-[#111827] mb-2">{selectedVideo.title}</h2>
-              <p className="text-gray-500 text-sm mb-4">
-                {selectedVideo.description ||
-                  "Watch the video to track your progress and earn rewards!"}
-              </p>
-
-              <div className={`mb-4 p-3 rounded-lg flex items-center transition-colors duration-300 ${skipDetected
-                  ? "bg-red-100 border border-red-400 text-red-700"
-                  : "bg-blue-50 border border-blue-200 text-blue-700"
-                }`}
-              >
-                <svg className="w-5 h-5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd"></path>
-                </svg>
-                <p className="text-sm font-medium">
-                  {skipDetected
-                    ? "Skipping Detected: Progress reset. Please play continuously."
-                    : "Progress is tracked only during continuous playback."}
-                </p>
-              </div>
-
-              <div className="mb-4">
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-sm font-semibold text-gray-700">Progress: {Math.round(progressPercentage)}%</span>
-                  <span className="text-sm text-gray-500">{Math.floor(viewTime)}s / {Math.floor(videoDuration)}s</span>
+                <div className="mt-4 p-2 bg-gray-200 rounded-lg text-center font-bold text-lg w-full">
+                  Squat Score: {squatScore}
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-3 relative overflow-hidden">
-                  <div
-                    className="h-full bg-[#e9632e] transition-all duration-500 ease-linear rounded-full"
-                    style={{ width: `${progressPercentage}%` }}
-                  ></div>
-                  <div className="absolute top-0 h-full w-px bg-white/50" style={{ left: '50%' }}></div>
-                </div>
-              </div>
-
-              <div className="flex flex-wrap gap-4 pt-2 justify-center sm:justify-start">
-                <div className={`flex items-center space-x-2 p-2 rounded-lg transition-colors ${rewardStatus.half ? "bg-green-100 text-green-700 shadow-md" : "bg-gray-100 text-gray-400"
-                  }`}>
-                  <span className="text-xl">{rewardStatus.half ? "✅" : "⚪"}</span>
-                  <span className="text-sm font-medium">Half Completed Reward ({Math.floor(videoDuration * 0.5)}s)</span>
-                </div>
-                <div className={`flex items-center space-x-2 p-2 rounded-lg transition-colors ${rewardStatus.full ? "bg-[#e9632e]/10 text-[#e9632e] border border-[#e9632e]/50 shadow-md" : "bg-gray-100 text-gray-400"
-                  }`}>
-                  <span className="text-xl">{rewardStatus.full ? "🏆" : "⚪"}</span>
-                  <span className="text-sm font-medium">Full Completion Reward ({Math.floor(videoDuration)}s)</span>
+                <div className="mt-2 p-2 bg-gray-200 rounded-lg text-center font-medium text-lg w-full">
+                  Squat Timer: {squatTimer}s
                 </div>
               </div>
             </div>
           </div>
         </div>
       )}
-
     </div>
   );
 };

@@ -46,7 +46,7 @@ exports.generateDietPlanTask = async (req, res) => {
             // Use the recommended free-tier-friendly Gemini model
             model: "gemini-2.5-flash", 
             messages: [{ role: "user", content: prompt }],
-            temperature: 0.7, // Good for creative generation
+            temperature: 0.7,
         });
 
         const rawContent = completion.choices[0].message.content.trim();

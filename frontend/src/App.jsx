@@ -47,8 +47,8 @@ const AppContent = () => {
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/change-password" element={<ChangePassword />} />
 
-  {/* New Diet Plan Page */}
-  <Route path="/diet-plan" element={<DietPlanPage />} />
+        {/* New Diet Plan Page */}
+        
 
         {/* Profile layout and nested routes */}
         <Route path="/profile" element={<DashboardLayout />}>
@@ -57,6 +57,7 @@ const AppContent = () => {
           <Route path="history" element={<WorkoutHistory />} />
           <Route path="settings" element={<Settings />} />
           <Route path="blogs" element={<ManageBlogs />} />
+          <Route path="diet-plan" element={<DietPlanPage />} />
         </Route>
       </Routes>
 

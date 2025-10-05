@@ -46,6 +46,7 @@ app.use("/api/workouts", workoutRoutes);
 app.use("/api/orkes-diet", aiDietPlanRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/personalized-trainer", paymentRoute);
+app.use("/model", express.static(path.join(__dirname, "public/model")));
 
 // MongoDB connection
 const connectDB = async () => {
