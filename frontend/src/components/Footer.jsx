@@ -9,8 +9,7 @@ const Footer = () => {
     <footer className="bg-white text-black px-6 py-10 mt-20 ">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
 
-        {/* Logo & Description */}
-        {/* Logo & Description with Images */}
+     
         <div className="space-y-3">
           <div className="flex items-center gap-3">
             <img src={logo1} alt="Logo 1" className="h-10 w-10 object-contain" />
@@ -22,7 +21,6 @@ const Footer = () => {
         </div>
 
 
-        {/* Quick Links */}
         <div>
           <h3 className="text-lg font-semibold mb-3">Quick Links</h3>
           <ul className="space-y-2 text-sm text-gray-600">
@@ -45,7 +43,6 @@ const Footer = () => {
 
       </div>
 
-      {/* Bottom Bar */}
       <div className="mt-10 border-t border-gray-700 pt-4 text-sm text-gray-500 text-center">
         © {new Date().getFullYear()} Fitby. All rights reserved.
         <div className="mt-2">
