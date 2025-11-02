@@ -29,7 +29,6 @@ import ChangePassword from './components/UserProfile/ChangePassword';
 const AppContent = () => {
   const location = useLocation();
 
-  // Hide footer if current path starts with /admin
   const hideFooter = location.pathname.startsWith('/admin');
 
   return (
