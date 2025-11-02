@@ -1,6 +1,5 @@
 const OpenAI = require("openai");
 const openai = new OpenAI({
-    // It assumes your key is in the .env file as GEMINI_API_KEY
     apiKey: process.env.GEMINI_API_KEY, 
     baseURL: "https://generativelanguage.googleapis.com/v1beta/openai" 
 });
@@ -52,17 +51,17 @@ exports.generateDietPlanTask = async (req, res) => {
         const rawContent = completion.choices[0].message.content.trim();
         let plan;
 
-        // --- FIX 2: Strip Markdown Code Fences (```json) for successful JSON.parse() ---
+       
         let jsonString = rawContent;
         if (rawContent.startsWith('```')) {
-            // This regex removes the starting '```json' and the closing '```'
+            
             jsonString = rawContent.replace(/^```json\s*|```\s*$/g, '').trim();
         }
         
         try {
             plan = JSON.parse(jsonString);
         } catch (e) {
-            // Fallback for non-JSON or unfixable response
+          
             console.error("Final JSON parsing failed:", e.message);
             plan = { status: "FAILED", error: "AI response was not valid JSON.", raw_response: rawContent };
         }
@@ -75,7 +74,7 @@ exports.generateDietPlanTask = async (req, res) => {
 
     } catch (err) {
         console.error("Workflow Execution Error:", err);
-        // Ensure a 500 status is sent to Orkes to signal a task failure
+        
         res.status(500).json({ 
             status: "FAILED", 
             error: "Backend processing error: " + err.message 
