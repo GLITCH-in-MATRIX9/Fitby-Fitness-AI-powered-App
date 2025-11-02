@@ -30,14 +30,14 @@ app.use(cors({
   credentials: true,
 }));
 
-// Body parsers
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Serve static files
+
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Routes
+
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/blogs", blogRoutes);
@@ -48,18 +48,18 @@ app.use("/api/chat", chatRoutes);
 app.use("/api/personalized-trainer", paymentRoute);
 app.use("/model", express.static(path.join(__dirname, "public/model")));
 
-// MongoDB connection
+
 const connectDB = async () => {
   try {
     const mongoURI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/fitnessAppDB";
     await mongoose.connect(mongoURI);
-    console.log("✅ MongoDB connected successfully");
+    console.log("MongoDB connected successfully");
 
     app.listen(PORT, () => {
-      console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`Server running on port ${PORT}`);
     });
   } catch (err) {
-    console.error("❌ MongoDB connection error:", err);
+    console.error("MongoDB connection error:", err);
     process.exit(1);
   }
 };
