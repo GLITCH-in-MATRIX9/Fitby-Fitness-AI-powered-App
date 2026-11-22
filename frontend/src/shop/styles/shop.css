@@ -1,0 +1,8 @@
+/* Scoped to the Shop module only – nothing here touches global styles. */
+.shop-root .shop-hide-scroll { scrollbar-width: none; }
+.shop-root .shop-hide-scroll::-webkit-scrollbar { display: none; }
+.shop-root .shop-pop { animation: shopPop .25s ease-out; }
+@keyframes shopPop { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.shop-root .shop-spin { animation: shopSpin .8s linear infinite; }
+@keyframes shopSpin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .shop-root .shop-pop, .shop-root .shop-spin { animation: none; } }

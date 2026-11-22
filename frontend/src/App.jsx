@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import Home from './pages/Home';
 
@@ -23,6 +23,9 @@ import Settings from "./components/UserProfile/Settings";
 import ManageBlogs from "./components/UserProfile/ManageBlogs";
 import Leaderboard from './pages/Leaderboard';
 import ChangePassword from './components/UserProfile/ChangePassword';
+import { ShopProvider } from './shop/context/ShopContext';
+
+const ShopApp = lazy(() => import('./shop/ShopApp'));
 
 
 
@@ -45,6 +48,7 @@ const AppContent = () => {
         <Route path='/admin' element={<AdminForm />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/change-password" element={<ChangePassword />} />
+        <Route path="/shop/*" element={<Suspense fallback={<div className="py-24 text-center text-[#626262]">Loading shop…</div>}><ShopApp /></Suspense>} />
 
         {/* New Diet Plan Page */}
         
@@ -69,7 +73,9 @@ const AppContent = () => {
 const App = () => {
   return (
     <Router>
-      <AppContent />
+      <ShopProvider>
+        <AppContent />
+      </ShopProvider>
     </Router>
   );
 };

@@ -1,0 +1,134 @@
+// @vitest-environment jsdom
+import 'fake-indexeddb/auto';
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen, waitFor, within, cleanup } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
+
+vi.mock('./src/shop/utils/imageStore.js', async (orig) => {
+  const m = await orig();
+  return { ...m, compressImage: async () => 'data:image/jpeg;base64,/9j/4AAQSkZJRg==' };
+});
+window.scrollTo = () => {};
+
+import { ShopProvider } from './src/shop/context/ShopContext';
+import ShopApp from './src/shop/ShopApp';
+import Navbar from './src/components/Navbar';
+import { AuthProvider } from './src/context/AuthContext';
+
+const App = () => (
+  <AuthProvider><MemoryRouter initialEntries={['/shop/admin/add']}><ShopProvider>
+    <Navbar /><Routes><Route path="/shop/*" element={<ShopApp />} /></Routes>
+  </ShopProvider></MemoryRouter></AuthProvider>
+);
+
+describe('Shop e2e', () => {
+  it('admin → shopper sync, cart, checkout, order tracking', async () => {
+    localStorage.clear();
+    const u = userEvent.setup();
+    const { container } = render(<App />);
+
+    // --- Admin: add product with new category/subcategory/tags/attributes/image
+    await u.type(screen.getByLabelText(/Product name/), 'High Waist Gym Leggings');
+    await u.type(screen.getByLabelText(/Description/), 'Super comfy high waist leggings for the gym');
+    await u.type(screen.getByLabelText(/Price/), '2000');
+    await u.clear(screen.getByLabelText(/Discount/)); await u.type(screen.getByLabelText(/Discount/), '10');
+    await u.type(screen.getByLabelText(/Stock quantity/), '7');
+    await u.type(screen.getByLabelText(/Brand/), 'TestBrand');
+    await u.upload(container.querySelector('input[type=file]'), new File(['x'], 'a.png', { type: 'image/png' }));
+    await screen.findByLabelText('Remove image');
+    await u.click(screen.getByText(/Create new category/));
+    await u.type(screen.getByPlaceholderText('e.g. Women'), 'Pilates{Enter}');
+    await u.click(screen.getByText(/Create new subcategory/));
+    await u.type(screen.getByPlaceholderText('e.g. Gym Leggings'), 'Gym Leggings{Enter}');
+    await u.click(screen.getByRole('button', { name: 'New Arrival' }));
+    await u.click(screen.getByRole('button', { name: 'Trending' }));
+    await u.click(screen.getByText('Add attribute'));
+    await u.type(screen.getByPlaceholderText(/Attribute name/), 'Size');
+    await u.type(screen.getByPlaceholderText(/Add value/), 'S,M,L{Enter}');
+    await u.click(screen.getByRole('button', { name: 'Save Product' }));
+    await screen.findByText('Product saved');
+
+    // persisted
+    const saved = JSON.parse(localStorage.getItem('fitby_shop_v1'));
+    expect(saved.products[0].name).toBe('High Waist Gym Leggings');
+    expect(saved.products[0].finalPrice).toBe(1800);
+    expect(saved.categories.some((c) => c.name === 'Pilates')).toBe(true);
+
+    // --- Shopper: appears everywhere, no refresh
+    await u.click(screen.getByRole('button', { name: /Shopper/ }));
+    await screen.findByText('Shop by Categories');
+    expect(screen.getAllByText('High Waist Gym Leggings').length).toBeGreaterThanOrEqual(3); // New Arrivals, Trending, All Products
+    const catCard = screen.getAllByRole('link').find((a) => a.getAttribute('href') === '/shop/browse?cat=pilates');
+    expect(catCard).toBeTruthy();
+    await u.click(catCard);
+    expect(await screen.findAllByText('High Waist Gym Leggings')).toHaveLength(1);
+    expect(screen.queryByText('Whey Protein 1 kg')).toBeNull();
+
+    // search + tag filter on all products
+    await u.click(screen.getByRole('button', { name: 'All' }));
+    await u.type(screen.getByPlaceholderText(/Search products, brands/), 'high waist gym');
+    expect(screen.getAllByText('High Waist Gym Leggings')).toHaveLength(1);
+    expect(screen.queryByText('Powerfit Gym T-Shirt')).toBeNull();
+
+    // --- product page: attribute required, then add
+    await u.click(screen.getByRole('button', { name: /Select Options/ }));
+    await u.click(await screen.findByRole('button', { name: /^Add to Cart/ }));
+    expect(await screen.findByText(/Please choose a size/)).toBeTruthy();
+    await u.click(screen.getByRole('button', { name: 'M' }));
+    await u.click(screen.getByRole('button', { name: /^Add to Cart/ }));
+    await waitFor(() => expect(JSON.parse(localStorage.getItem('fitby_shop_v1')).cart).toHaveLength(1));
+    expect(within(screen.getAllByRole('link', { name: /Cart/ })[0]).getByText('1')).toBeTruthy();
+
+    // --- cart → checkout (COD)
+    await u.click(screen.getAllByRole('link', { name: /Cart/ })[1]);
+    await u.click(await screen.findByRole('button', { name: 'Proceed to Checkout' }));
+    await u.click(await waitFor(() => { const b = container.querySelector('form button[type=submit]'); if (!b) throw new Error('x'); return b; })); // empty → validation errors
+    expect(await screen.findByText('Enter your full name')).toBeTruthy();
+    const inputs = [...container.querySelectorAll('form input')];
+    const byLabel = (t) => screen.getByLabelText(new RegExp('^' + t));
+    await u.type(byLabel('Full Name'), 'Test User'); await u.type(byLabel('Email'), 't@e.com');
+    await u.type(byLabel('Phone Number'), '9876543210'); await u.type(byLabel('House / Flat Number'), '1A');
+    await u.type(byLabel('Street Address'), 'Main St'); await u.type(byLabel('City'), 'Delhi');
+    await u.type(byLabel('State'), 'Delhi'); await u.type(byLabel('PIN Code'), '110001');
+    expect(inputs.length).toBeGreaterThan(5);
+    // declined card first
+    await u.type(screen.getByLabelText(/^Cardholder Name/), 'Test User');
+    await u.type(screen.getByLabelText(/^Card Number/), '4242424242420000');
+    await u.type(screen.getByLabelText(/^Expiry/), '1230'); await u.type(screen.getByLabelText(/^CVV/), '123');
+    await u.click(container.querySelector('form button[type=submit]'));
+    expect(await screen.findByText(/Payment declined/, {}, { timeout: 4000 })).toBeTruthy();
+    expect(JSON.parse(localStorage.getItem('fitby_shop_v1')).orders.length).toBe(3); // no order created
+    await u.click(screen.getByText('Cash on Delivery'));
+    await u.click(container.querySelector('form button[type=submit]'));
+    await screen.findByText('Order placed!', {}, { timeout: 4000 });
+
+    const after = JSON.parse(localStorage.getItem('fitby_shop_v1'));
+    expect(after.cart).toHaveLength(0);
+    expect(after.orders[0].payment).toEqual({ method: 'Cash on Delivery', status: 'Pending' });
+    expect(JSON.stringify(after)).not.toMatch(/4242|"cvv"/);
+    expect(after.products.find((p) => p.name === 'High Waist Gym Leggings').stock).toBe(6);
+    const oid = after.orders[0].id;
+
+    // --- Admin accepts + updates status; buyer sees it
+    await u.click(screen.getByRole('button', { name: /Admin/ }));
+    await u.click(await screen.findByRole('link', { name: /Manage Orders/ }));
+    const row = (await screen.findByText(oid)).closest('tr');
+    await u.click(within(row).getByRole('button', { name: 'Accept' }));
+    await u.click(within(row).getByRole('button', { name: 'Update' }));
+    await u.selectOptions(await screen.findByDisplayValue('Accepted'), 'Shipped');
+    await u.click(screen.getByLabelText('Close'));
+    await u.click(screen.getByRole('button', { name: /Shopper/ }));
+    await u.click(screen.getByRole('link', { name: 'My Orders' }));
+    const mine = (await screen.findByText(oid)).closest('div.bg-white');
+    expect(within(mine).getAllByText('Shipped').length).toBeGreaterThan(0);
+
+    // --- reject restores stock
+    expect(JSON.parse(localStorage.getItem('fitby_shop_v1')).orders[0].history.map((h) => h.status)).toEqual(['Pending', 'Accepted', 'Shipped']);
+    cleanup();
+    // persistence after "refresh"
+    render(<App />);
+    await u.click(screen.getByRole('button', { name: /Shopper/ }));
+    expect((await screen.findAllByText('High Waist Gym Leggings')).length).toBeGreaterThan(0);
+  }, 60000);
+});

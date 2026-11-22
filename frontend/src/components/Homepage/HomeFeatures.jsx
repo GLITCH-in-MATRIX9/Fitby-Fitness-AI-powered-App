@@ -1,5 +1,5 @@
 import React from "react";
-import { FaBullseye, FaChartLine, FaHistory, FaPen, FaListAlt, FaClipboardList } from "react-icons/fa";
+import { FaBullseye, FaChartLine, FaHistory, FaPen, FaListAlt, FaClipboardList, FaShoppingBag, FaShoppingCart } from "react-icons/fa";
 
 const HomeFeatures = () => {
   const features = [
@@ -29,9 +29,9 @@ const HomeFeatures = () => {
       description: "Visualize your fitness improvements with dynamic charts."
     },
     {
-      title: "Progress Log",
-      icon: <FaClipboardList className="text-3xl text-[#ed6126]" />,
-      description: "Maintain a detailed log of your achievements and challenges."
+      title: "Intelligent Shopping",
+      icon: <FaShoppingCart className="text-3xl text-[#ed6126]" />,
+      description: "Discover products that complement your fitness journey."
     }
   ];
 

@@ -5,6 +5,7 @@ import logo2 from "../assets/FITBY.png";
 import { FaFire, FaBars, FaTimes } from "react-icons/fa";
 import { AiOutlineFire } from "react-icons/ai"; // Imported for outline style
 import { AuthContext } from "../context/AuthContext.jsx";
+import { ShoppingBag } from "lucide-react";
 
 const Navbar = () => {
   const { user, logout } = useContext(AuthContext);
@@ -104,6 +105,16 @@ const Navbar = () => {
         {/* Right section (Desktop) */}
         <div className="hidden md:flex items-center space-x-4 relative">
           
+          {/* SHOP shortcut (cart lives in the Shop's own top bar) */}
+          <NavLink
+            to="/shop"
+            className="flex items-center gap-1 text-[#ed6126] text-sm font-semibold hover:text-black transition duration-200"
+            title="FitBy Shop"
+          >
+            <ShoppingBag size={18} />
+            Shop
+          </NavLink>
+
           {/* STREAK SETTER BUTTON (New Element) */}
           <button
             onClick={handleSetStreak}
@@ -217,6 +228,13 @@ const Navbar = () => {
             className="block hover:text-[#ed6126]"
           >
             Fitby AI
+          </NavLink>
+          <NavLink
+            to="/shop"
+            onClick={() => setShowMenu(false)}
+            className="flex items-center gap-2 hover:text-[#ed6126]"
+          >
+            <ShoppingBag size={16} /> Shop
           </NavLink>
 
           {user ? (
