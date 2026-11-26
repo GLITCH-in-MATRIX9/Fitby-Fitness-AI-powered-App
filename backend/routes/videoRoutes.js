@@ -4,6 +4,7 @@ const {
   createVideo,
   getVideos,
   getVideoById,
+  searchYouTubeVideos,
   updateVideo,
   deleteVideo,
 } = require("../controllers/videoController");
@@ -13,6 +14,9 @@ router.post("/", createVideo);
 
 // @route   GET /api/videos
 router.get("/", getVideos);
+
+// @route   GET /api/videos/youtube-search
+router.get("/youtube-search", searchYouTubeVideos);
 
 // @route   GET /api/videos/:id
 router.get("/:id", getVideoById);

@@ -1,12 +1,31 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import PoseTracker from "./PoseTracker";
 
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.DEV
+    ? "/api"
+    : "https://fitby-fitness-ai-powered-app.onrender.com/api");
+
 const getYouTubeId = (url) => {
   if (!url) return null;
   const match = url.match(
     /(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|v\/))([\w-]{11})/
   );
   return match ? match[1] : null;
+};
+
+const getMuscleName = (muscle) => {
+  const names = {
+    fshoulders: "front shoulders",
+    frontshoulders: "front shoulders",
+    lowerback: "lower back",
+    middletraps: "middle traps",
+    rearshoulders: "rear shoulders",
+    rshoulders: "rear shoulders",
+    trapsmiddle: "middle traps",
+  };
+  return names[muscle.toLowerCase()] || muscle.replace(/[-_]/g, " ");
 };
 
 const VideoSection = ({ muscle, gender, newVideo }) => {
@@ -28,23 +47,46 @@ const VideoSection = ({ muscle, gender, newVideo }) => {
   const ytScriptLoaded = useRef(false);
 
   useEffect(() => {
+    let cancelled = false;
+
     const fetchVideos = async () => {
       setLoading(true);
       setError("");
-      try {
-        const res = await fetch(
-          `http://localhost:5000/api/videos?muscle=${muscle}&gender=${gender}`
-        );
-        if (!res.ok) throw new Error("Failed to fetch videos");
-        const data = await res.json();
-        setVideos(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
+      const params = new URLSearchParams({ muscle, gender });
+      const apiUrl = API_BASE_URL.replace(/\/$/, "");
+      const fetchJson = async (url) => {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`Request failed (${response.status})`);
+        return response.json();
+      };
+
+      const [savedResult, youtubeResult] = await Promise.allSettled([
+        fetchJson(`${apiUrl}/videos?${params.toString()}`),
+        fetchJson(`${apiUrl}/videos/youtube-search?${params.toString()}`),
+      ]);
+
+      if (cancelled) return;
+
+      const savedVideos =
+        savedResult.status === "fulfilled" ? savedResult.value : [];
+      const youtubeVideos =
+        youtubeResult.status === "fulfilled"
+          ? youtubeResult.value.map((video) => ({ ...video, source: "youtube" }))
+          : [];
+      const failures = [savedResult, youtubeResult]
+        .filter((result) => result.status === "rejected")
+        .map((result) => result.reason?.message || "A video source could not be loaded");
+
+      setVideos([...savedVideos, ...youtubeVideos]);
+      setError(failures.join(". "));
+      setLoading(false);
     };
+
     fetchVideos();
+
+    return () => {
+      cancelled = true;
+    };
   }, [muscle, gender]);
 
   useEffect(() => {
@@ -163,49 +205,74 @@ const VideoSection = ({ muscle, gender, newVideo }) => {
   }, [stopProgressTracking]);
 
   const progressPercentage = videoDuration ? (viewTime / videoDuration) * 100 : 0;
+  const muscleName = getMuscleName(muscle);
+  const youtubeSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(
+    `${gender} ${muscleName} workout exercises`
+  )}`;
+  const playableVideos = videos.filter((video) => getYouTubeId(video.videoUrl));
 
   if (loading) return <p className="p-4 text-gray-500">Loading videos...</p>;
-  if (error) return <p className="p-4 text-red-500">Error: {error}</p>;
-  if (!videos.length) return <p className="p-4 text-gray-500">No videos found for {muscle} ({gender}).</p>;
 
   return (
     <div className="p-4 bg-white rounded-xl shadow-lg mt-6">
       <h3 className="text-2xl font-bold mb-6 text-[#111827]">
-        {muscle.charAt(0).toUpperCase() + muscle.slice(1)} Workouts for{" "}
+        {muscleName.charAt(0).toUpperCase() + muscleName.slice(1)} Workouts for{" "}
         {gender.charAt(0).toUpperCase() + gender.slice(1)}
       </h3>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {videos.map((video) => {
-          const id = getYouTubeId(video.videoUrl);
-          if (!id) return null;
-          return (
-            <div
-              key={video._id}
-              className="relative cursor-pointer rounded-xl overflow-hidden shadow-2xl transition-transform duration-300 hover:scale-[1.03] border-4 border-transparent hover:border-[#e9632e]/50"
-              onClick={() => handleVideoSelect(video)}
-            >
-              <img
-                src={`https://img.youtube.com/vi/${id}/hqdefault.jpg`}
-                alt={video.title || "Workout video"}
-                className="w-full h-40 object-cover"
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = "https://placehold.co/740x360/ccc/fff?text=No+Thumbnail";
-                }}
-              />
-              <div className="absolute inset-0 flex items-center justify-center bg-opacity-25 hover:bg-opacity-50 transition">
-                <svg className="w-14 h-14 text-white opacity-90 transition-opacity" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M8 5v14l11-7z" />
-                </svg>
+      {error && (
+        <p className="mb-4 text-sm text-amber-700" role="status">
+          Saved videos could not be loaded ({error}). You can still find exercises on YouTube below.
+        </p>
+      )}
+
+      {playableVideos.length ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {playableVideos.map((video) => {
+            const id = getYouTubeId(video.videoUrl);
+            return (
+              <div
+                key={video._id || video.videoId || video.videoUrl}
+                className="relative cursor-pointer rounded-xl overflow-hidden shadow-2xl transition-transform duration-300 hover:scale-[1.03] border-4 border-transparent hover:border-[#e9632e]/50"
+                onClick={() => handleVideoSelect(video)}
+              >
+                <img
+                  src={video.thumbnailUrl || `https://img.youtube.com/vi/${id}/hqdefault.jpg`}
+                  alt={video.title || "Workout video"}
+                  className="w-full h-40 object-cover"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "https://placehold.co/740x360/ccc/fff?text=No+Thumbnail";
+                  }}
+                />
+                <div className="absolute inset-0 flex items-center justify-center bg-opacity-25 hover:bg-opacity-50 transition">
+                  <svg className="w-14 h-14 text-white opacity-90 transition-opacity" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-gray-900/90 to-transparent">
+                  <p className="text-white font-bold truncate text-base">{video.title}</p>
+                </div>
               </div>
-              <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-gray-900/90 to-transparent">
-                <p className="text-white font-bold truncate text-base">{video.title}</p>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="rounded-xl border border-gray-200 bg-gray-50 p-5">
+          <p className="mb-4 text-gray-600">
+            No saved videos are available for this muscle yet. Browse matching exercises on YouTube:
+          </p>
+          <a
+            href={youtubeSearchUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-3 rounded-lg bg-[#e9632e] px-5 py-3 font-semibold text-white transition hover:bg-orange-700"
+          >
+            <span aria-hidden="true">▶</span>
+            Search {muscleName} workouts on YouTube
+          </a>
+        </div>
+      )}
 
       {selectedVideo && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 p-4" style={{ backdropFilter: "blur(8px)" }}>
