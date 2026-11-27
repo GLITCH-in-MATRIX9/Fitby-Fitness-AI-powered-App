@@ -3,6 +3,7 @@ import { AiOutlineUser, AiOutlineCalendar, AiOutlineEdit } from "react-icons/ai"
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import blogBg from "../../assets/blogsbackground.jpg"; // background image for CTA
+import { getImageUrl } from "../../utils/imageUrl";
 
 const BlogList = () => {
   const [blogs, setBlogs] = useState([]);
@@ -99,11 +100,7 @@ const BlogList = () => {
             >
               <h2 className="text-2xl font-bold mb-4">{selectedBlog.title}</h2>
               <img
-                src={
-                  selectedBlog.headerImage.startsWith("http")
-                    ? selectedBlog.headerImage
-                    : `https://fitby-fitness-ai-powered-app.onrender.com/uploads/${selectedBlog.headerImage}`
-                }
+                src={getImageUrl(selectedBlog.headerImage)}
                 alt={selectedBlog.title}
                 className="w-full h-60 object-cover rounded mb-2"
               />
@@ -160,11 +157,7 @@ const BlogList = () => {
             onClick={() => setSelectedBlog(featured)}
           >
             <img
-              src={
-                featured.headerImage.startsWith("http")
-                  ? featured.headerImage
-                  : `https://fitby-fitness-ai-powered-app.onrender.com/uploads/${featured.headerImage}`
-              }
+              src={getImageUrl(featured.headerImage)}
               alt={featured.title}
               className="w-full h-80 object-cover"
             />
@@ -253,11 +246,7 @@ const BlogList = () => {
             onClick={() => setSelectedBlog(blog)}
           >
             <img
-              src={
-                blog.headerImage.startsWith("http")
-                  ? blog.headerImage
-                  : `https://fitby-fitness-ai-powered-app.onrender.com/uploads/${blog.headerImage}`
-              }
+              src={getImageUrl(blog.headerImage)}
               alt={blog.title}
               className="h-40 w-full object-cover"
             />

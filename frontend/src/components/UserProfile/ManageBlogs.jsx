@@ -9,6 +9,7 @@ import {
   FaSave,
 } from "react-icons/fa";
 import LexicalEditor from "./LexicalEditor";
+import { getImageUrl } from "../../utils/imageUrl";
 
 const ManageBlogs = () => {
   const { user, token } = useContext(AuthContext);
@@ -204,7 +205,7 @@ const ManageBlogs = () => {
             >
               {blog.headerImage && (
                 <img
-                  src={`https://fitby-fitness-ai-powered-app.onrender.com/uploads/${blog.headerImage}`}
+                  src={getImageUrl(blog.headerImage)}
                   alt={blog.title}
                   className="w-full md:w-1/3 h-48 object-cover"
                 />

@@ -15,7 +15,7 @@ exports.createBlog = async (req, res) => {
       title,
       content,
       tags: Array.isArray(tags) ? tags : [], 
-      headerImage: req.file ? req.file.filename : "",
+      headerImage: req.file ? req.file.path : "",
       author: user.name,
       userId: user._id,
       publishedAt: new Date(),
@@ -82,7 +82,7 @@ exports.updateBlog = async (req, res) => {
     blog.tags = tags ? (Array.isArray(tags) ? tags : tags.split(',').map(tag => tag.trim())) : blog.tags;
 
     if (req.file) {
-      blog.headerImage = req.file.filename;
+      blog.headerImage = req.file.path;
     }
 
     const updated = await blog.save();

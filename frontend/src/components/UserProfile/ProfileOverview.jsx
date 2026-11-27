@@ -2,6 +2,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import ProfileStats from "../UserProfile/ProfileStats";
+import { getImageUrl } from "../../utils/imageUrl";
 import { useNavigate } from "react-router-dom";
 import {
   FaUser, FaEnvelope, FaMapMarkerAlt, FaWeight, FaBirthdayCake,
@@ -93,7 +94,7 @@ const ProfileOverview = () => {
             ...user,
             rank: index + 1,
             image: user.image
-              ? `https://fitby-fitness-ai-powered-app.onrender.com/uploads/${user.image}`
+              ? getImageUrl(user.image)
               : "https://cdn-icons-png.flaticon.com/512/847/847969.png",
           }));
       }
@@ -103,7 +104,7 @@ const ProfileOverview = () => {
           name: profile.name || "You",
           rank: "—",
           image: profile.image
-            ? `https://fitby-fitness-ai-powered-app.onrender.com/uploads/${profile.image}`
+            ? getImageUrl(profile.image)
             : "https://cdn-icons-png.flaticon.com/512/847/847969.png",
         });
       }
@@ -116,7 +117,7 @@ const ProfileOverview = () => {
           name: profile.name || "You",
           rank: "—",
           image: profile.image
-            ? `https://fitby-fitness-ai-powered-app.onrender.com/uploads/${profile.image}`
+            ? getImageUrl(profile.image)
             : "https://cdn-icons-png.flaticon.com/512/847/847969.png",
         }]);
       }
@@ -247,7 +248,7 @@ const ProfileOverview = () => {
             previewUrl
               ? previewUrl
               : profile.image
-                ? `https://fitby-fitness-ai-powered-app.onrender.com/uploads/${profile.image}`
+                ? getImageUrl(profile.image)
                 : null
           }
           onImageUpload={(file) => {

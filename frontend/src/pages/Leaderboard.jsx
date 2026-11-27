@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { FaUser, FaRunning } from "react-icons/fa";
+import { getImageUrl } from "../utils/imageUrl";
 
 const getFitnessRank = (points) => {
   if (points >= 1000) return "Beast";
@@ -35,7 +36,7 @@ const Leaderboard = () => {
               ...user,
               rank: index + 1,
               image: user.image
-                ? `https://fitby-fitness-ai-powered-app.onrender.com/uploads/${user.image}`
+                ? getImageUrl(user.image)
                 : "https://cdn-icons-png.flaticon.com/512/847/847969.png",
             }));
         }
@@ -47,7 +48,7 @@ const Leaderboard = () => {
             name: currentUser.name || "You",
             rank: "—",
             image: currentUser.image
-              ? `https://fitby-fitness-ai-powered-app.onrender.com/uploads/${currentUser.image}`
+              ? getImageUrl(currentUser.image)
               : "https://cdn-icons-png.flaticon.com/512/847/847969.png",
           });
         }
